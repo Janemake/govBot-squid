@@ -1,0 +1,32 @@
+
+# type Proposals @entity {
+#   id: ID! 
+#   proposer: ProposedGroup @derivedFrom (field: "propIdx")
+#   tabler: TabledGroup @derivedFrom (field: "propIdx")
+# }
+
+type ProposedGroup @entity {
+  id: ID! #propIdx
+  propIdx: String! @unique
+  titleProposals: String
+  creatorProposals: String
+  #deposit: BigInt
+  eventDate: DateTime
+  eventblockHeight: Int
+}
+
+
+type TabledGroup @entity {
+  id: ID! #propIdx
+  propIdx: String! @unique
+  #deposit: BigInt
+  eventDate: DateTime
+  eventblockHeight: Int
+  nbseconders: Int
+}
+
+# type Account @entity {
+#   id: ID! 
+#   account: String @unique
+#   identityDisplay: String 
+# }
