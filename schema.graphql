@@ -1,32 +1,170 @@
+type Account @entity {
+  id: ID! #referendumHash
+  account: String @unique
+  identityDisplay: String 
+  councilMember: String
+  prop: [Proposals]  @derivedFrom (field: "propCreator")
+  refs: [Referenda] @derivedFrom (field: "propCreator")
+  treasuryProps: [TreasuryProposals] @derivedFrom (field: "propCreator")
+  treasuryBeneficiary: [TreasuryProposals] @derivedFrom (field: "beneficiary")
+  councilProps: [CouncilMotions] @derivedFrom (field: "propCreator")
+  techCommProps: [TechComProposals] @derivedFrom (field: "propCreator")
+  bountiesProps: [BountiesProposals] @derivedFrom (field: "propCreator")
+  bountyBeneficiary: [BountiesProposals] @derivedFrom (field: "beneficiary")
+  eventDetails: [AllEvents] @derivedFrom (field: "eventOwner")
+}
 
-# type Proposals @entity {
-#   id: ID! 
-#   proposer: ProposedGroup @derivedFrom (field: "propIdx")
-#   tabler: TabledGroup @derivedFrom (field: "propIdx")
-# }
+type CouncilMotions @entity {
+  id: ID! 
+  titleMotions: String
+  propCreator: Account
+  startDate: DateTime
+  endDate: DateTime
+  startblockHeight: Int
+  endblockHeight: Int
+  proposalHash: String! @unique
+  proposalSource: String
+  threshold: Int
+  votes: [MotionsVotes] @derivedFrom (field: "motionsId")
+  status: String
+}
 
-type ProposedGroup @entity {
-  id: ID! #propIdx
-  propIdx: String! @unique
+type MotionsVotes @entity {
+  id: ID!  #index
+  motionHash: String! @unique
+  motionsId: CouncilMotions!
+  memberAddress: Account!
+  approve: String
+  nbAyes: Int
+  nbNay: Int
+  eventHash: String
+  lastUpdateDate: DateTime
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
+}
+
+type TreasuryProposals @entity {
+  id: ID! 
   titleProposals: String
-  creatorProposals: String
-  #deposit: BigInt
+  propCreator: Account
+  beneficiary: Account
+  amount: BigInt
+  slashAmount: BigInt
+  startDate: DateTime
+  endDate: DateTime
+  proposalHash: String! @unique
+  startblockHeight: Int
+  endblockHeight: Int
+  motionHash: String
+  motionType: String
+  status: String
+}
+
+type BountiesProposals @entity {
+  id: ID!  # Hash
+  reason: String
+  propCreator: Account
+  beneficiary: Account
+  curator: Account
+  bountyAmount: BigInt
+  bountyHash: String! @unique
+  startDate: DateTime
+  lastUpdateDate: DateTime
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
+  statusBounties: String
+}
+
+type Referenda @entity {
+  id: ID! #refIndex
+  refIndex: String! @unique
+  titleReferendum: String
+  propCreator: Account
+  startDate: DateTime
+  lastUpdateDate: DateTime
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
+  refSource: String
+  referendumHash: String
+  votes: [ReferendaVotes] @derivedFrom (field: "refIdx")
+  typeVote: String
+  statusReferendum: String
+}
+
+type ReferendaVotes @entity {
+  id: ID!  #event id
+  refIdx:Referenda!
+  voter: Account!
+  voteType: String
+  balance: BigInt
+  vote: String
+  nbAyes: BigInt
+  nbNay: BigInt
+  eventHash:String
   eventDate: DateTime
   eventblockHeight: Int
 }
 
-
-type TabledGroup @entity {
-  id: ID! #propIdx
-  propIdx: String! @unique
-  #deposit: BigInt
-  eventDate: DateTime
-  eventblockHeight: Int
-  nbseconders: Int
+type Proposals @entity {
+  id: ID! #referendumHash
+  titleProposals: String
+  propCreator: Account
+  deposit: BigInt
+  startDate: DateTime
+  lastUpdateDate: DateTime
+  proposalHash: String! @unique
+  nbSeconder: Int
+  seconders: [SecondedGroup] @derivedFrom (field: "propIdx")
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
+  typeVote: String
+  statusProposals: String
 }
 
-# type Account @entity {
-#   id: ID! 
-#   account: String @unique
-#   identityDisplay: String 
-# }
+type SecondedGroup @entity {
+  id: ID!  #propIndex - Account
+  propIdx:Proposals!
+  eventHash: String
+  eventDate: DateTime
+  eventblockHeight: Int
+  seconder: Account!
+}
+
+type TechComProposals @entity {
+  id: ID! #referendumHash
+  titleProposals: String
+  propCreator: Account
+  threshold: String
+  startDate: DateTime
+  lastUpdateDate: DateTime
+  proposalHash: String! @unique
+  proposalSource: String
+  votes: [TechComProposalsVotes] @derivedFrom (field: "propId")
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
+  statusProposals: String
+}
+
+type TechComProposalsVotes @entity {
+  id: ID!  #event_id
+  propId: TechComProposals!
+  voter: Account
+  voted: String
+  nbAyes: Int
+  nbNay: Int
+  eventHash: String
+  lastUpdateDate: DateTime
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
+}
+
+type AllEvents @entity {
+  id: ID! 
+  eventId: String
+  eventName: String
+  proposalHash: String
+  eventOwner: Account
+  eventDate: DateTime
+  eventblockHeight: Int
+  eventHash: String
+}

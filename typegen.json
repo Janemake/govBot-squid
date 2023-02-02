@@ -6,18 +6,61 @@
     "Democracy.Proposed",
     "Democracy.Tabled",
     "Democracy.ExternalTabled",
+    "Democracy.Seconded",
+    "Democracy.ProposalCanceled",
     "Democracy.Started",
     "Democracy.Passed",
     "Democracy.NotPassed",
     "Democracy.Cancelled",
     "Democracy.Voted",
-    "Democracy.Seconded",
-    "Democracy.ProposalCanceled",
+
+    "TechnicalCommittee.Proposed",
+    "TechnicalCommittee.Voted",
+    "TechnicalCommittee.Approved",
+    "TechnicalCommittee.Disapproved",
+    "TechnicalCommittee.Executed",
+    "TechnicalCommittee.MemberExecuted",
+    "TechnicalCommittee.Closed",
+
+    "Council.Proposed",
+    "Council.Voted",
+    "Council.Approved",
+    "Council.Disapproved",
+    "Council.Executed",
+    "Council.MemberExecuted",
+    "Council.Closed",
+
+    "Treasury.Proposed",
+    "Treasury.Awarded",
+    "Treasury.Rejected",
+    "Treasury.SpendApproved",
+
+    "Bounties.BountyProposed",
+    "Bounties.BountyRejected",
+    "Bounties.BountyBecameActive",
+    "Bounties.BountyAwarded",
+    "Bounties.BountyClaimed",
+    "Bounties.BountyCanceled",
+    "Bounties.BountyExtended",
+
+    "Preimage.Noted",
+    "Preimage.Requested",
+    "Preimage.Cleared",
+
     "Identity.IdentitySet",
     "Identity.IdentityCleared",
-    "Identity.JudgementGiven",
-    "Balances.Reserved"
+    "Identity.JudgementGiven"
   ],
-  "calls": [],
-  "storage": ["Identity.IdentityOf"]
+  "calls": [
+  ],
+  "storage": [
+    "Preimage.PreimageFor",
+    "Preimage.StatusFor",
+    "Identity.IdentityOf",
+    "Treasury.Proposals",
+    "Council.Voting",
+    "Council.Proposals",
+    "Council.Members",
+    "TechnicalCommittee.Members"
+  ]
 }

@@ -3,8 +3,11 @@ import {Chain, ChainContext, EventContext, Event, Result, Option} from './suppor
 import * as v1 from './v1'
 import * as v1090 from './v1090'
 import * as v1110 from './v1110'
+import * as v1120 from './v1120'
+import * as v1140 from './v1140'
+import * as v1199 from './v1199'
 
-export class BalancesReservedEvent {
+export class BountiesBountyAwardedEvent {
     private readonly _chain: Chain
     private readonly event: Event
 
@@ -12,37 +15,751 @@ export class BalancesReservedEvent {
     constructor(ctx: ChainContext, event: Event)
     constructor(ctx: EventContext, event?: Event) {
         event = event || ctx.event
-        assert(event.name === 'Balances.Reserved')
+        assert(event.name === 'Bounties.BountyAwarded')
         this._chain = ctx._chain
         this.event = event
     }
 
     /**
-     *  Some balance was reserved (moved from free to reserved). \[who, value\]
+     *  A bounty is awarded to a beneficiary. \[index, beneficiary\]
      */
     get isV1(): boolean {
-        return this._chain.getEventHash('Balances.Reserved') === '23bebce4ca9ed37548947d07d4dc50e772f07401b9a416b6aa2f3e9cb5adcaf4'
+        return this._chain.getEventHash('Bounties.BountyAwarded') === '0379562584d6426ccff49705dfa9dba95ad94215b772fd97d0ad0c4ca0001c12'
     }
 
     /**
-     *  Some balance was reserved (moved from free to reserved). \[who, value\]
+     *  A bounty is awarded to a beneficiary. \[index, beneficiary\]
      */
-    get asV1(): [Uint8Array, bigint] {
+    get asV1(): [number, Uint8Array] {
         assert(this.isV1)
         return this._chain.decodeEvent(this.event)
     }
 
     /**
-     * Some balance was reserved (moved from free to reserved).
+     * A bounty is awarded to a beneficiary.
      */
     get isV1090(): boolean {
-        return this._chain.getEventHash('Balances.Reserved') === 'e84a34a6a3d577b31f16557bd304282f4fe4cbd7115377f4687635dc48e52ba5'
+        return this._chain.getEventHash('Bounties.BountyAwarded') === '5314a4c20f133eee477b8b4ce9998238defda69cb2db9344567309c8e6badd90'
     }
 
     /**
-     * Some balance was reserved (moved from free to reserved).
+     * A bounty is awarded to a beneficiary.
      */
-    get asV1090(): {who: Uint8Array, amount: bigint} {
+    get asV1090(): {index: number, beneficiary: Uint8Array} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class BountiesBountyBecameActiveEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Bounties.BountyBecameActive')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A bounty proposal is funded and became active. \[index\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Bounties.BountyBecameActive') === '0a0f30b1ade5af5fade6413c605719d59be71340cf4884f65ee9858eb1c38f6c'
+    }
+
+    /**
+     *  A bounty proposal is funded and became active. \[index\]
+     */
+    get asV1(): number {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A bounty proposal is funded and became active.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Bounties.BountyBecameActive') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+    }
+
+    /**
+     * A bounty proposal is funded and became active.
+     */
+    get asV1090(): {index: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class BountiesBountyCanceledEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Bounties.BountyCanceled')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A bounty is cancelled. \[index\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Bounties.BountyCanceled') === '0a0f30b1ade5af5fade6413c605719d59be71340cf4884f65ee9858eb1c38f6c'
+    }
+
+    /**
+     *  A bounty is cancelled. \[index\]
+     */
+    get asV1(): number {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A bounty is cancelled.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Bounties.BountyCanceled') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+    }
+
+    /**
+     * A bounty is cancelled.
+     */
+    get asV1090(): {index: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class BountiesBountyClaimedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Bounties.BountyClaimed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A bounty is claimed by beneficiary. \[index, payout, beneficiary\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Bounties.BountyClaimed') === '86708250ac506876b8d63d9c97b4ca0fa73f0199c633da6fb2a8956aaab8c743'
+    }
+
+    /**
+     *  A bounty is claimed by beneficiary. \[index, payout, beneficiary\]
+     */
+    get asV1(): [number, bigint, Uint8Array] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A bounty is claimed by beneficiary.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Bounties.BountyClaimed') === 'fb4b26ccfabe9f649bfadde9c0bbee0816e9cf32c7384f2f21c03a852ec23f77'
+    }
+
+    /**
+     * A bounty is claimed by beneficiary.
+     */
+    get asV1090(): {index: number, payout: bigint, beneficiary: Uint8Array} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class BountiesBountyExtendedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Bounties.BountyExtended')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A bounty expiry is extended. \[index\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Bounties.BountyExtended') === '0a0f30b1ade5af5fade6413c605719d59be71340cf4884f65ee9858eb1c38f6c'
+    }
+
+    /**
+     *  A bounty expiry is extended. \[index\]
+     */
+    get asV1(): number {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A bounty expiry is extended.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Bounties.BountyExtended') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+    }
+
+    /**
+     * A bounty expiry is extended.
+     */
+    get asV1090(): {index: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class BountiesBountyProposedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Bounties.BountyProposed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  New bounty proposal. \[index\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Bounties.BountyProposed') === '0a0f30b1ade5af5fade6413c605719d59be71340cf4884f65ee9858eb1c38f6c'
+    }
+
+    /**
+     *  New bounty proposal. \[index\]
+     */
+    get asV1(): number {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * New bounty proposal.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Bounties.BountyProposed') === '25a99cc820e15400356f62165725d9d84847d859e62ca1e5fd6eb340dc5c217e'
+    }
+
+    /**
+     * New bounty proposal.
+     */
+    get asV1090(): {index: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class BountiesBountyRejectedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Bounties.BountyRejected')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A bounty proposal was rejected; funds were slashed. \[index, bond\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Bounties.BountyRejected') === 'a0e51e81445baa317309351746e010ed2435e30ff7e53fbb2cf59283f3b9c536'
+    }
+
+    /**
+     *  A bounty proposal was rejected; funds were slashed. \[index, bond\]
+     */
+    get asV1(): [number, bigint] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A bounty proposal was rejected; funds were slashed.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Bounties.BountyRejected') === 'dc987b921ffaf859792cab48c45dff837e0f100cb2deeb83c24a11b61e50082e'
+    }
+
+    /**
+     * A bounty proposal was rejected; funds were slashed.
+     */
+    get asV1090(): {index: number, bond: bigint} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilApprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.Approved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion was approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.Approved') === '21ea0c8f2488eafafdea1de92b54cd17d8b1caff525e37616abf0ff93f11531d'
+    }
+
+    /**
+     *  A motion was approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get asV1(): Uint8Array {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.Approved') === 'b8668610145a6851ad2d5b7dd4bfc15e29402d9a8558401ab955896007f866a5'
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     */
+    get asV1090(): {proposalHash: Uint8Array} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilClosedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.Closed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A proposal was closed because its threshold was reached or after its duration was up.
+     *  \[proposal_hash, yes, no\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.Closed') === '7d509ca6ee36d401f2d5410aa32038550c256cc3ce4b34cdfe1f8adea0e1679c'
+    }
+
+    /**
+     *  A proposal was closed because its threshold was reached or after its duration was up.
+     *  \[proposal_hash, yes, no\]
+     */
+    get asV1(): [Uint8Array, number, number] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.Closed') === '084e73926c22836c888c17e49053d3b72e2feaa904b8f0175d21fb5b800542f9'
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     */
+    get asV1090(): {proposalHash: Uint8Array, yes: number, no: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilDisapprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.Disapproved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion was not approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.Disapproved') === '21ea0c8f2488eafafdea1de92b54cd17d8b1caff525e37616abf0ff93f11531d'
+    }
+
+    /**
+     *  A motion was not approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get asV1(): Uint8Array {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.Disapproved') === 'b8668610145a6851ad2d5b7dd4bfc15e29402d9a8558401ab955896007f866a5'
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     */
+    get asV1090(): {proposalHash: Uint8Array} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilExecutedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.Executed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion was executed; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.Executed') === 'd0cdbb3589e958e044894bb21646de3e18ddd8e6ff7b185a4d1964628627a102'
+    }
+
+    /**
+     *  A motion was executed; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get asV1(): [Uint8Array, v1.DispatchResult] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.Executed') === '985881284cd2d985dd366d839f2f998c085d1947cd3d3888f28b2b95e28572f1'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1090(): {proposalHash: Uint8Array, result: v1090.Type_27} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Council.Executed') === '66d95d205ed46ac5925431190b235d9609aa48d16739fe72413be37096aa7cd0'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1110(): {proposalHash: Uint8Array, result: v1110.Type_27} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1120(): boolean {
+        return this._chain.getEventHash('Council.Executed') === '277b4c0e428c2d4a9558753a98f57fb1fce7e27c7e6311138f5416b2baf86e33'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1120(): {proposalHash: Uint8Array, result: v1120.Type_28} {
+        assert(this.isV1120)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1140(): boolean {
+        return this._chain.getEventHash('Council.Executed') === 'e3462770cd5fd27e557ee1e7e9aa904092ca387f3eec55182b953d310847e044'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1140(): {proposalHash: Uint8Array, result: v1140.Type_29} {
+        assert(this.isV1140)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1199(): boolean {
+        return this._chain.getEventHash('Council.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1199(): {proposalHash: Uint8Array, result: v1199.Type_30} {
+        assert(this.isV1199)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilMemberExecutedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.MemberExecuted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A single member did some action; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.MemberExecuted') === 'd0cdbb3589e958e044894bb21646de3e18ddd8e6ff7b185a4d1964628627a102'
+    }
+
+    /**
+     *  A single member did some action; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get asV1(): [Uint8Array, v1.DispatchResult] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.MemberExecuted') === '985881284cd2d985dd366d839f2f998c085d1947cd3d3888f28b2b95e28572f1'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1090(): {proposalHash: Uint8Array, result: v1090.Type_27} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Council.MemberExecuted') === '66d95d205ed46ac5925431190b235d9609aa48d16739fe72413be37096aa7cd0'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1110(): {proposalHash: Uint8Array, result: v1110.Type_27} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1120(): boolean {
+        return this._chain.getEventHash('Council.MemberExecuted') === '277b4c0e428c2d4a9558753a98f57fb1fce7e27c7e6311138f5416b2baf86e33'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1120(): {proposalHash: Uint8Array, result: v1120.Type_28} {
+        assert(this.isV1120)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1140(): boolean {
+        return this._chain.getEventHash('Council.MemberExecuted') === 'e3462770cd5fd27e557ee1e7e9aa904092ca387f3eec55182b953d310847e044'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1140(): {proposalHash: Uint8Array, result: v1140.Type_29} {
+        assert(this.isV1140)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1199(): boolean {
+        return this._chain.getEventHash('Council.MemberExecuted') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1199(): {proposalHash: Uint8Array, result: v1199.Type_30} {
+        assert(this.isV1199)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilProposedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.Proposed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion (given hash) has been proposed (by given account) with a threshold (given
+     *  `MemberCount`).
+     *  \[account, proposal_index, proposal_hash, threshold\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.Proposed') === '8d3dc2ef388c0264b2a1bd5e18788f415f4c08186c50dbbee2c60e61d81cb025'
+    }
+
+    /**
+     *  A motion (given hash) has been proposed (by given account) with a threshold (given
+     *  `MemberCount`).
+     *  \[account, proposal_index, proposal_hash, threshold\]
+     */
+    get asV1(): [Uint8Array, number, Uint8Array, number] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.Proposed') === '63978c884e95719fd416c8a38a2ec2ec5a691a58a28349d62b0173643f0d8262'
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     */
+    get asV1090(): {account: Uint8Array, proposalIndex: number, proposalHash: Uint8Array, threshold: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class CouncilVotedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Council.Voted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion (given hash) has been voted on by given account, leaving
+     *  a tally (yes votes and no votes given respectively as `MemberCount`).
+     *  \[account, proposal_hash, voted, yes, no\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Council.Voted') === '5693223b18444daea47c5d959a8026ce5084d3e9c76fe5a2be5ef93f3526e0ac'
+    }
+
+    /**
+     *  A motion (given hash) has been voted on by given account, leaving
+     *  a tally (yes votes and no votes given respectively as `MemberCount`).
+     *  \[account, proposal_hash, voted, yes, no\]
+     */
+    get asV1(): [Uint8Array, Uint8Array, boolean, number, number] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('Council.Voted') === 'b69e97272b7c060192bbc1a5e91692b0a8b905727af6d9eb5627b7857ede0846'
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     */
+    get asV1090(): {account: Uint8Array, proposalHash: Uint8Array, voted: boolean, yes: number, no: number} {
         assert(this.isV1090)
         return this._chain.decodeEvent(this.event)
     }
@@ -571,6 +1288,704 @@ export class IdentityJudgementGivenEvent {
      */
     get asV1090(): {target: Uint8Array, registrarIndex: number} {
         assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class PreimageClearedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Preimage.Cleared')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A preimage has ben cleared.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Preimage.Cleared') === '19b8576fc9fe9553b0b5ad154324ccae0d0d43fdccbdffddf2bb6066a9b37b5c'
+    }
+
+    /**
+     * A preimage has ben cleared.
+     */
+    get asV1110(): {hash: Uint8Array} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class PreimageNotedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Preimage.Noted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A preimage has been noted.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Preimage.Noted') === '19b8576fc9fe9553b0b5ad154324ccae0d0d43fdccbdffddf2bb6066a9b37b5c'
+    }
+
+    /**
+     * A preimage has been noted.
+     */
+    get asV1110(): {hash: Uint8Array} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class PreimageRequestedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Preimage.Requested')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A preimage has been requested.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Preimage.Requested') === '19b8576fc9fe9553b0b5ad154324ccae0d0d43fdccbdffddf2bb6066a9b37b5c'
+    }
+
+    /**
+     * A preimage has been requested.
+     */
+    get asV1110(): {hash: Uint8Array} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeApprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.Approved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion was approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Approved') === '21ea0c8f2488eafafdea1de92b54cd17d8b1caff525e37616abf0ff93f11531d'
+    }
+
+    /**
+     *  A motion was approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get asV1(): Uint8Array {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Approved') === 'b8668610145a6851ad2d5b7dd4bfc15e29402d9a8558401ab955896007f866a5'
+    }
+
+    /**
+     * A motion was approved by the required threshold.
+     */
+    get asV1090(): {proposalHash: Uint8Array} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeClosedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.Closed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A proposal was closed because its threshold was reached or after its duration was up.
+     *  \[proposal_hash, yes, no\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Closed') === '7d509ca6ee36d401f2d5410aa32038550c256cc3ce4b34cdfe1f8adea0e1679c'
+    }
+
+    /**
+     *  A proposal was closed because its threshold was reached or after its duration was up.
+     *  \[proposal_hash, yes, no\]
+     */
+    get asV1(): [Uint8Array, number, number] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Closed') === '084e73926c22836c888c17e49053d3b72e2feaa904b8f0175d21fb5b800542f9'
+    }
+
+    /**
+     * A proposal was closed because its threshold was reached or after its duration was up.
+     */
+    get asV1090(): {proposalHash: Uint8Array, yes: number, no: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeDisapprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.Disapproved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion was not approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Disapproved') === '21ea0c8f2488eafafdea1de92b54cd17d8b1caff525e37616abf0ff93f11531d'
+    }
+
+    /**
+     *  A motion was not approved by the required threshold.
+     *  \[proposal_hash\]
+     */
+    get asV1(): Uint8Array {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Disapproved') === 'b8668610145a6851ad2d5b7dd4bfc15e29402d9a8558401ab955896007f866a5'
+    }
+
+    /**
+     * A motion was not approved by the required threshold.
+     */
+    get asV1090(): {proposalHash: Uint8Array} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeExecutedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.Executed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion was executed; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === 'd0cdbb3589e958e044894bb21646de3e18ddd8e6ff7b185a4d1964628627a102'
+    }
+
+    /**
+     *  A motion was executed; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get asV1(): [Uint8Array, v1.DispatchResult] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === '985881284cd2d985dd366d839f2f998c085d1947cd3d3888f28b2b95e28572f1'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1090(): {proposalHash: Uint8Array, result: v1090.Type_27} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === '66d95d205ed46ac5925431190b235d9609aa48d16739fe72413be37096aa7cd0'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1110(): {proposalHash: Uint8Array, result: v1110.Type_27} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1120(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === '277b4c0e428c2d4a9558753a98f57fb1fce7e27c7e6311138f5416b2baf86e33'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1120(): {proposalHash: Uint8Array, result: v1120.Type_28} {
+        assert(this.isV1120)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1140(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === 'e3462770cd5fd27e557ee1e7e9aa904092ca387f3eec55182b953d310847e044'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1140(): {proposalHash: Uint8Array, result: v1140.Type_29} {
+        assert(this.isV1140)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get isV1199(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Executed') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A motion was executed; result will be `Ok` if it returned without error.
+     */
+    get asV1199(): {proposalHash: Uint8Array, result: v1199.Type_30} {
+        assert(this.isV1199)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeMemberExecutedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.MemberExecuted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A single member did some action; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.MemberExecuted') === 'd0cdbb3589e958e044894bb21646de3e18ddd8e6ff7b185a4d1964628627a102'
+    }
+
+    /**
+     *  A single member did some action; result will be `Ok` if it returned without error.
+     *  \[proposal_hash, result\]
+     */
+    get asV1(): [Uint8Array, v1.DispatchResult] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.MemberExecuted') === '985881284cd2d985dd366d839f2f998c085d1947cd3d3888f28b2b95e28572f1'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1090(): {proposalHash: Uint8Array, result: v1090.Type_27} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.MemberExecuted') === '66d95d205ed46ac5925431190b235d9609aa48d16739fe72413be37096aa7cd0'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1110(): {proposalHash: Uint8Array, result: v1110.Type_27} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1120(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.MemberExecuted') === '277b4c0e428c2d4a9558753a98f57fb1fce7e27c7e6311138f5416b2baf86e33'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1120(): {proposalHash: Uint8Array, result: v1120.Type_28} {
+        assert(this.isV1120)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1140(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.MemberExecuted') === 'e3462770cd5fd27e557ee1e7e9aa904092ca387f3eec55182b953d310847e044'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1140(): {proposalHash: Uint8Array, result: v1140.Type_29} {
+        assert(this.isV1140)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get isV1199(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.MemberExecuted') === 'e4ddba6fedfd1d730b14622cc84321978192b87a473c4fee1f401e1a07add330'
+    }
+
+    /**
+     * A single member did some action; result will be `Ok` if it returned without error.
+     */
+    get asV1199(): {proposalHash: Uint8Array, result: v1199.Type_30} {
+        assert(this.isV1199)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeProposedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.Proposed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion (given hash) has been proposed (by given account) with a threshold (given
+     *  `MemberCount`).
+     *  \[account, proposal_index, proposal_hash, threshold\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Proposed') === '8d3dc2ef388c0264b2a1bd5e18788f415f4c08186c50dbbee2c60e61d81cb025'
+    }
+
+    /**
+     *  A motion (given hash) has been proposed (by given account) with a threshold (given
+     *  `MemberCount`).
+     *  \[account, proposal_index, proposal_hash, threshold\]
+     */
+    get asV1(): [Uint8Array, number, Uint8Array, number] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Proposed') === '63978c884e95719fd416c8a38a2ec2ec5a691a58a28349d62b0173643f0d8262'
+    }
+
+    /**
+     * A motion (given hash) has been proposed (by given account) with a threshold (given
+     * `MemberCount`).
+     */
+    get asV1090(): {account: Uint8Array, proposalIndex: number, proposalHash: Uint8Array, threshold: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TechnicalCommitteeVotedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'TechnicalCommittee.Voted')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A motion (given hash) has been voted on by given account, leaving
+     *  a tally (yes votes and no votes given respectively as `MemberCount`).
+     *  \[account, proposal_hash, voted, yes, no\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Voted') === '5693223b18444daea47c5d959a8026ce5084d3e9c76fe5a2be5ef93f3526e0ac'
+    }
+
+    /**
+     *  A motion (given hash) has been voted on by given account, leaving
+     *  a tally (yes votes and no votes given respectively as `MemberCount`).
+     *  \[account, proposal_hash, voted, yes, no\]
+     */
+    get asV1(): [Uint8Array, Uint8Array, boolean, number, number] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     */
+    get isV1090(): boolean {
+        return this._chain.getEventHash('TechnicalCommittee.Voted') === 'b69e97272b7c060192bbc1a5e91692b0a8b905727af6d9eb5627b7857ede0846'
+    }
+
+    /**
+     * A motion (given hash) has been voted on by given account, leaving
+     * a tally (yes votes and no votes given respectively as `MemberCount`).
+     */
+    get asV1090(): {account: Uint8Array, proposalHash: Uint8Array, voted: boolean, yes: number, no: number} {
+        assert(this.isV1090)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TreasuryAwardedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Treasury.Awarded')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  Some funds have been allocated. \[proposal_index, award, beneficiary\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Treasury.Awarded') === '86708250ac506876b8d63d9c97b4ca0fa73f0199c633da6fb2a8956aaab8c743'
+    }
+
+    /**
+     *  Some funds have been allocated. \[proposal_index, award, beneficiary\]
+     */
+    get asV1(): [number, bigint, Uint8Array] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * Some funds have been allocated.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Treasury.Awarded') === '998b846fdf605dfbbe27d46b36b246537b990ed6d4deb2f0177d539b9dab3878'
+    }
+
+    /**
+     * Some funds have been allocated.
+     */
+    get asV1110(): {proposalIndex: number, award: bigint, account: Uint8Array} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TreasuryProposedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Treasury.Proposed')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  New proposal. \[proposal_index\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Treasury.Proposed') === '0a0f30b1ade5af5fade6413c605719d59be71340cf4884f65ee9858eb1c38f6c'
+    }
+
+    /**
+     *  New proposal. \[proposal_index\]
+     */
+    get asV1(): number {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * New proposal.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Treasury.Proposed') === 'e9ffb62c9cf38a8abb0e419c0655e66f4415cc9c0faa1066316d07cb033b8ff6'
+    }
+
+    /**
+     * New proposal.
+     */
+    get asV1110(): {proposalIndex: number} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TreasuryRejectedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Treasury.Rejected')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     *  A proposal was rejected; funds were slashed. \[proposal_index, slashed\]
+     */
+    get isV1(): boolean {
+        return this._chain.getEventHash('Treasury.Rejected') === 'a0e51e81445baa317309351746e010ed2435e30ff7e53fbb2cf59283f3b9c536'
+    }
+
+    /**
+     *  A proposal was rejected; funds were slashed. \[proposal_index, slashed\]
+     */
+    get asV1(): [number, bigint] {
+        assert(this.isV1)
+        return this._chain.decodeEvent(this.event)
+    }
+
+    /**
+     * A proposal was rejected; funds were slashed.
+     */
+    get isV1110(): boolean {
+        return this._chain.getEventHash('Treasury.Rejected') === 'f9b7fb646bc37c38ad87edfaa08a0ca293b38294934c1114934c7a8fe00b6b79'
+    }
+
+    /**
+     * A proposal was rejected; funds were slashed.
+     */
+    get asV1110(): {proposalIndex: number, slashed: bigint} {
+        assert(this.isV1110)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class TreasurySpendApprovedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'Treasury.SpendApproved')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * A new spend proposal has been approved.
+     */
+    get isV1170(): boolean {
+        return this._chain.getEventHash('Treasury.SpendApproved') === 'fce90c02bffde89fb0e8723868aa8e94bfe9c1c48c5af8c34efd8ff5173184f9'
+    }
+
+    /**
+     * A new spend proposal has been approved.
+     */
+    get asV1170(): {proposalIndex: number, amount: bigint, beneficiary: Uint8Array} {
+        assert(this.isV1170)
         return this._chain.decodeEvent(this.event)
     }
 }

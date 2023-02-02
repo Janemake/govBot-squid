@@ -1,4 +1,4 @@
-// import {BigDecimal} from '@subsquid/big-decimal'
+//import {BigDecimal} from '@subsquid/big-decimal'
 import * as ss58 from '@subsquid/ss58'
 import {isHex} from '@subsquid/util-internal-hex'
 
@@ -22,3 +22,7 @@ export const encodeAddress = (bytes: Uint8Array): string =>
 
 export const decodeAddress = (address: string): Uint8Array =>
   ss58.codec('phala').decode(address)
+
+  export const encodeHash = (bytes: Uint8Array): string =>
+  Buffer.from(bytes!).toString('utf-8')
+

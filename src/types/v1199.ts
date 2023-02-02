@@ -1,43 +1,32 @@
 import type {Result, Option} from './support'
 
-export type Type_27 = Type_27_Ok | Type_27_Err
+export type Type_30 = Type_30_Ok | Type_30_Err
 
-export interface Type_27_Ok {
+export interface Type_30_Ok {
     __kind: 'Ok'
 }
 
-export interface Type_27_Err {
+export interface Type_30_Err {
     __kind: 'Err'
     value: DispatchError
-}
-
-export type AccountVote = AccountVote_Standard | AccountVote_Split
-
-export interface AccountVote_Standard {
-    __kind: 'Standard'
-    vote: number
-    balance: bigint
-}
-
-export interface AccountVote_Split {
-    __kind: 'Split'
-    aye: bigint
-    nay: bigint
 }
 
 export type RequestStatus = RequestStatus_Unrequested | RequestStatus_Requested
 
 export interface RequestStatus_Unrequested {
     __kind: 'Unrequested'
-    value: ([Uint8Array, bigint] | undefined)
+    deposit: [Uint8Array, bigint]
+    len: number
 }
 
 export interface RequestStatus_Requested {
     __kind: 'Requested'
-    value: number
+    deposit: ([Uint8Array, bigint] | undefined)
+    count: number
+    len: (number | undefined)
 }
 
-export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_TooManyConsumers | DispatchError_Token | DispatchError_Arithmetic
+export type DispatchError = DispatchError_Other | DispatchError_CannotLookup | DispatchError_BadOrigin | DispatchError_Module | DispatchError_ConsumerRemaining | DispatchError_NoProviders | DispatchError_TooManyConsumers | DispatchError_Token | DispatchError_Arithmetic | DispatchError_Transactional | DispatchError_Exhausted | DispatchError_Corruption | DispatchError_Unavailable
 
 export interface DispatchError_Other {
     __kind: 'Other'
@@ -53,8 +42,7 @@ export interface DispatchError_BadOrigin {
 
 export interface DispatchError_Module {
     __kind: 'Module'
-    index: number
-    error: number
+    value: ModuleError
 }
 
 export interface DispatchError_ConsumerRemaining {
@@ -77,6 +65,28 @@ export interface DispatchError_Token {
 export interface DispatchError_Arithmetic {
     __kind: 'Arithmetic'
     value: ArithmeticError
+}
+
+export interface DispatchError_Transactional {
+    __kind: 'Transactional'
+    value: TransactionalError
+}
+
+export interface DispatchError_Exhausted {
+    __kind: 'Exhausted'
+}
+
+export interface DispatchError_Corruption {
+    __kind: 'Corruption'
+}
+
+export interface DispatchError_Unavailable {
+    __kind: 'Unavailable'
+}
+
+export interface ModuleError {
+    index: number
+    error: Uint8Array
 }
 
 export type TokenError = TokenError_NoFunds | TokenError_WouldDie | TokenError_BelowMinimum | TokenError_CannotCreate | TokenError_UnknownAsset | TokenError_Frozen | TokenError_Unsupported
@@ -121,4 +131,14 @@ export interface ArithmeticError_Overflow {
 
 export interface ArithmeticError_DivisionByZero {
     __kind: 'DivisionByZero'
+}
+
+export type TransactionalError = TransactionalError_LimitReached | TransactionalError_NoLayer
+
+export interface TransactionalError_LimitReached {
+    __kind: 'LimitReached'
+}
+
+export interface TransactionalError_NoLayer {
+    __kind: 'NoLayer'
 }
