@@ -28,21 +28,24 @@ export class TreasuryProposals {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     slashAmount!: bigint | undefined | null
 
+    @Index_()
+    @ManyToOne_(() => Account, {nullable: true})
+    lastEventOwner!: Account | undefined | null
+
     @Column_("timestamp with time zone", {nullable: true})
     startDate!: Date | undefined | null
 
     @Column_("timestamp with time zone", {nullable: true})
-    endDate!: Date | undefined | null
+    lastUpdateDate!: Date | undefined | null
 
-    @Index_({unique: true})
-    @Column_("text", {nullable: false})
-    proposalHash!: string
+    @Column_("text", {nullable: true})
+    proposalHash!: string | undefined | null
 
     @Column_("int4", {nullable: true})
     startblockHeight!: number | undefined | null
 
     @Column_("int4", {nullable: true})
-    endblockHeight!: number | undefined | null
+    lastUpdateblockHeight!: number | undefined | null
 
     @Column_("text", {nullable: true})
     motionHash!: string | undefined | null

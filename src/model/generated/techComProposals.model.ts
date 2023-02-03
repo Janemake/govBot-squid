@@ -27,9 +27,8 @@ export class TechComProposals {
     @Column_("timestamp with time zone", {nullable: true})
     lastUpdateDate!: Date | undefined | null
 
-    @Index_({unique: true})
-    @Column_("text", {nullable: false})
-    proposalHash!: string
+    @Column_("text", {nullable: true})
+    proposalHash!: string | undefined | null
 
     @Column_("text", {nullable: true})
     proposalSource!: string | undefined | null

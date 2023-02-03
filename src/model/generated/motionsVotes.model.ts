@@ -1,4 +1,4 @@
-import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, Index as Index_, ManyToOne as ManyToOne_} from "typeorm"
+import {Entity as Entity_, Column as Column_, PrimaryColumn as PrimaryColumn_, ManyToOne as ManyToOne_, Index as Index_} from "typeorm"
 import {CouncilMotions} from "./councilMotions.model"
 import {Account} from "./account.model"
 
@@ -11,9 +11,8 @@ export class MotionsVotes {
     @PrimaryColumn_()
     id!: string
 
-    @Index_({unique: true})
-    @Column_("text", {nullable: false})
-    motionHash!: string
+    @Column_("text", {nullable: true})
+    motionHash!: string | undefined | null
 
     @Index_()
     @ManyToOne_(() => CouncilMotions, {nullable: true})
@@ -37,9 +36,6 @@ export class MotionsVotes {
 
     @Column_("timestamp with time zone", {nullable: true})
     lastUpdateDate!: Date | undefined | null
-
-    @Column_("int4", {nullable: true})
-    startblockHeight!: number | undefined | null
 
     @Column_("int4", {nullable: true})
     lastUpdateblockHeight!: number | undefined | null

@@ -80,19 +80,16 @@ const decodeEvent = (
   let name = item.name
 
    
-  // console.log("Initial name =====> ", name)
+  console.log("Traitement de l'event  =====> ", name)
 
   switch (item.name) {
 
     // PROPOSALS EVENTS
     case 'Democracy.Proposed': {
       const e = new DemocracyProposedEvent(ctx, item.event)
-      // console.log(item.event.call)
-      // console.log("decodeHex =====> ", item.event.call?.args)
-      
+  
       if (e.isV1090){
         let {proposalIndex, deposit} = e.asV1090
-        // console.log("refIndex: ",String(proposalIndex))
         return {name, 
                 args: {
                       id: item.event.id,
@@ -110,7 +107,6 @@ const decodeEvent = (
       } else if (e.isV1){
           
           let propData = e.asV1
-          // console.log("refIndex: ",String(propData[0]))
           return {name, 
                   args: {
                         id: item.event.id,
@@ -124,7 +120,7 @@ const decodeEvent = (
                         eventblockHeight: block.header.height}
                   }
       } else {
-            console.log(item.name, " Type not available:", e)
+
             return null
       }
 
@@ -132,7 +128,6 @@ const decodeEvent = (
     
     case 'Democracy.Tabled': {
       const e = new DemocracyTabledEvent(ctx, item.event)
-      // console.log(" Call event =====> ", item.event)
       if (e.isV1090){
         let {proposalIndex, deposit} = e.asV1090
       
@@ -184,8 +179,6 @@ const decodeEvent = (
     
     case 'Democracy.Seconded': {
       const e = new DemocracySecondedEvent(ctx, item.event)
-      // console.log(" event =====> ", item.event)
-      // console.log(" Call event =====> ", item.event.call)
       if (e.isV1110){
         let {seconder, propIndex} = e.asV1110    
         return {name, 
@@ -207,18 +200,12 @@ const decodeEvent = (
     
     case 'Democracy.ExternalTabled': {
       const e = new DemocracyExternalTabledEvent(ctx, item.event)
-      // console.log("\n\n ")
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event)
-      // console.log("\n\n ")
       if (e.isV1){
         // let {propIndex} = e.asV1   
 
         return {name, 
                 args: {
                       id: item.event.id,
-                      // proposalHash: item.event.extrinsic?.call.args.proposalHash,
-                      // eventHash: item.event.extrinsic?.hash,
                       eventDate: new Date(block.header.timestamp),
                       eventblockHeight: block.header.height
                     }
@@ -231,8 +218,6 @@ const decodeEvent = (
 
     case 'Democracy.ProposalCanceled': {
       const e = new DemocracyProposalCanceledEvent(ctx, item.event)
-      // console.log("Hash ", item.name, " ==== ", item.event)
-      // const {propIndex} = e.asV1170	  
       if (e.isV1170){
         let {propIndex} = e.asV1170    
         return {name, 
@@ -373,11 +358,8 @@ const decodeEvent = (
     
     case 'Democracy.NotPassed': {
       const e = new DemocracyNotPassedEvent(ctx, item.event)
-
-
       if (e.isV1090){
         let {refIndex} = e.asV1090	
-        // console.log("Hash ", item.name, " ==== ", item.event.extrinsic?.call.args)
         return {name, 
                 args: {
                       id: item.event.id,
@@ -407,7 +389,6 @@ const decodeEvent = (
     
     case 'Democracy.Passed': {
       const e = new DemocracyPassedEvent(ctx, item.event)
-
       if (e.isV1090){
         let {refIndex} = e.asV1090	
       
@@ -440,12 +421,6 @@ const decodeEvent = (
      
     case 'Democracy.Started': {
       const e = new DemocracyStartedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // // console.log("\n__kind =====> ", item.event.args[1])
-      // console.log("\n__kind =====> ", item.event)
-      // // console.log("\nCall =====> ", item.event.call?.origin)
-      // console.log("\n\n")
-      //   // console.log("decodeHex =====> ", decodeHex(item.event.call?.args.proposal.value.proposalHash))
       let address = "tbd"
       if (item.event.call?.origin != undefined) {
           address = getOriginAccountId(item.event.call?.origin)
@@ -455,7 +430,6 @@ const decodeEvent = (
 
       if (e.isV1090){
         let {refIndex, threshold} = e.asV1090
-        // console.log("\n__kind =====> ", item.event.args.threshold.__kind)
         return {name, 
                 args: {
                        id: item.event.id,
@@ -474,7 +448,6 @@ const decodeEvent = (
 
       } else if (e.isV1){
           let propData = e.asV1
-          // console.log("\n__kind =====> ", item.event.args[1].__kind)
           return {name, 
                   args: {
                     id: item.event.id,
@@ -498,25 +471,20 @@ const decodeEvent = (
   
     case 'Democracy.Voted': {
       const e = new DemocracyVotedEvent(ctx, item.event)
-
-      console.log("Initial name =====> ", name)
-      console.log("\n__kind =====> ", item.event)
-      console.log("\n\n")
-        // console.log("decode
+      // console.log("Type =====> ", String(item.event.args.vote.__kind))      
+      // console.log("Balance =====> ", BigInt(item.event.args.vote.balance))
       if (e.isV1110){
         let {voter, refIndex, vote} = e.asV1110
-        // console.log("Vote :", vote)
         return {name, 
                 args: {
                   id: item.event.id,
                        proposalIndex: String(refIndex),
                        address: encodeAddress(voter),
-                       voteType: String(item.event.args.__kind),
-                       balance: BigInt(item.event.args.balance),
-                       vote: String(item.event.args.__kind),
+                       voteType: String(item.event.args.vote.__kind),
+                       balance: BigInt(item.event.args.vote.balance),
+                       vote: String(item.event.args.vote.vote),
                        nbAyes: BigInt(0),
                        nbNay: BigInt(0),
-                       nbSeconder: item.event.extrinsic?.call.args.secondsUpperBound,
                        eventHash: item.event.extrinsic?.hash,
                        eventDate: new Date(block.header.timestamp),
                        eventblockHeight: block.header.height
@@ -532,8 +500,7 @@ const decodeEvent = (
      // TechnicalCommittee EVENTS   
      case 'TechnicalCommittee.Proposed': {
       const e = new TechnicalCommitteeProposedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event)
+
       if (e.isV1090){
         let {account, proposalIndex, proposalHash, threshold} = e.asV1090
 
@@ -541,12 +508,12 @@ const decodeEvent = (
                 args: {
                         id: item.event.id,
                         proposalIndex: String(proposalIndex),
-                        voteType: threshold,
+                        voteType: String(threshold),
                         address: encodeAddress(account),
-                          hash: item.event.call?.args.proposal.proposalHash,
-                         title: "tbd",
-                         eventHash: item.event.extrinsic?.hash,
-                         eventDate: new Date(block.header.timestamp),
+                        hash: item.event.call?.args.proposal.proposalHash,
+                        title: "tbd",
+                        eventHash: item.event.extrinsic?.hash,
+                        eventDate: new Date(block.header.timestamp),
                         eventblockHeight: block.header.height
                     }
                 }
@@ -555,8 +522,8 @@ const decodeEvent = (
           let propData = e.asV1
           return {name, 
                   args: {
-                    id: item.event.id,
-                    proposalIndex: String(propData[1]),
+                        id: item.event.id,
+                        proposalIndex: String(propData[1]),
                         voteType: propData[3],
                         creator: encodeAddress(propData[0]),
                         hash: item.event.call?.args.proposal.proposalHash,
@@ -573,11 +540,8 @@ const decodeEvent = (
 
     case 'TechnicalCommittee.Approved': {
       const e = new TechnicalCommitteeApprovedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
       if (e.isV1090){
         let {proposalHash} = e.asV1090
-        // console.log(" Adresse:", getOriginAccountId(item.event.extrinsic?.call.origin))
         return {name, 
                 args: {
                       id: item.event.id,
@@ -610,9 +574,6 @@ const decodeEvent = (
       /**
       * A proposal was closed because its threshold was reached or after its duration was up.
       */
-
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
       if (e.isV1090){
         let {proposalHash, yes, no} = e.asV1090
 
@@ -650,11 +611,8 @@ const decodeEvent = (
 
     case 'TechnicalCommittee.Disapproved': {
       const e = new TechnicalCommitteeDisapprovedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
       if (e.isV1090){
         let {proposalHash} = e.asV1090
-        // console.log(" Adresse:", getOriginAccountId(item.event.extrinsic?.call.origin))
         return {name, 
                 args: {
                   id: item.event.id,
@@ -684,19 +642,19 @@ const decodeEvent = (
 
     case 'TechnicalCommittee.Executed': {
       const e = new TechnicalCommitteeExecutedEvent(ctx, item.event)
-      // console.log(item.event.call?.args)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.extrinsic)
-      // console.log("Events calls =====> \n", item.event.call?.args)
+      // console.log("\n\n Event \n\n", item.event)
+      let prophash = item.event.call?.args.proposal.value.proposalHash
+
+
       if (e.isV1090){
         let {proposalHash, result} = e.asV1090
-        
+  
         return {name, 
                 args: {
                         id: item.event.id,
                         resultVote: result,
-                        threshold: item.event.call?.args.threshold,
-                        hash: item.event.call?.args.proposal.proposalHash,
+                        threshold: String(item.event.call?.args.threshold),
+                        hash: prophash,
                         title: "tbd",
                         address: getOriginAccountId(item.event.call?.origin),
                         eventHash: item.event.extrinsic?.hash,
@@ -708,13 +666,12 @@ const decodeEvent = (
 
       } else if (e.isV1110){
         let {proposalHash, result} = e.asV1110
-
         return {name, 
                 args: {
                       id: item.event.id,
                       resultVote: result,
-                      threshold: item.event.call?.args.threshold,
-                       hash: item.event.call?.args.proposal.proposalHash,
+                      threshold: String(item.event.call?.args.threshold),
+                      hash: prophash,
                        title: "tbd",
                        address: getOriginAccountId(item.event.call?.origin),
                        eventHash: item.event.extrinsic?.hash,
@@ -726,13 +683,12 @@ const decodeEvent = (
 
       } else if (e.isV1120){
         let {proposalHash, result} = e.asV1120
-
         return {name, 
                 args: {
                       id: item.event.id,
                       resultVote: result,
-                      threshold: item.event.call?.args.threshold,
-                       hash: item.event.call?.args.proposal.proposalHash,
+                      threshold: String(item.event.call?.args.threshold),
+                      hash: prophash,
                        title: "tbd",
                        address: getOriginAccountId(item.event.call?.origin),
                        eventHash: item.event.extrinsic?.hash,
@@ -744,13 +700,12 @@ const decodeEvent = (
 
       } else if (e.isV1140){
         let {proposalHash, result} = e.asV1140
-
         return {name, 
                 args: {
                       id: item.event.id,
                       resultVote: result,
-                      threshold: item.event.call?.args.threshold,
-                       hash: item.event.call?.args.proposal.proposalHash,
+                      threshold: String(item.event.call?.args.threshold),
+                      hash: prophash,
                        title: "tbd",
                        address: getOriginAccountId(item.event.call?.origin),
                        eventHash: item.event.extrinsic?.hash,
@@ -762,13 +717,12 @@ const decodeEvent = (
 
       } else if (e.isV1199){
         let {proposalHash, result} = e.asV1199
-
         return {name, 
                 args: {
                         id: item.event.id,
                         resultVote: result,
-                        threshold: item.event.call?.args.threshold,
-                        hash: item.event.call?.args.proposal.proposalHash,
+                        threshold: String(item.event.call?.args.threshold),
+                        hash: prophash,
                         title: "tbd",
                         address: getOriginAccountId(item.event.call?.origin),
                         eventHash: item.event.extrinsic?.hash,
@@ -780,12 +734,13 @@ const decodeEvent = (
 
       } else if (e.isV1){
           let propData = e.asV1
+          // console.log("\n\nproposal Hash  =====> \n\n", propData[0])
           return {name, 
                   args: {
                         id: item.event.id,
                         resultVote: propData[1],
-                        threshold: item.event.call?.args.threshold,
-                        hash: item.event.call?.args.proposal.proposalHash,
+                        threshold: String(item.event.call?.args.threshold),
+                        hash: prophash,
                         title: "tbd",
                         address: getOriginAccountId(item.event.call?.origin),
                         eventHash: item.event.extrinsic?.hash,
@@ -801,7 +756,7 @@ const decodeEvent = (
 
     case 'TechnicalCommittee.MemberExecuted': {
       const e = new TechnicalCommitteeMemberExecutedEvent(ctx, item.event)
-      // console.log(item.event.call?.args)
+
       if (e.isV1090){
         let {proposalHash, result} = e.asV1090
 
@@ -943,11 +898,10 @@ const decodeEvent = (
     // Council EVENTS 
     case 'Council.Proposed': {
       const e = new CouncilProposedEvent(ctx, item.event)
-      
-      
+      // console.log("\n\n Council :", item.event)
       if (e.isV1090){
         let {account, proposalIndex, proposalHash, threshold} = e.asV1090
-        // console.log("Events calls =====> \n", String(proposalHash))
+
         return {name, 
                 args: {id: item.event.id,
                        proposalIndex: String(proposalIndex),
@@ -956,7 +910,8 @@ const decodeEvent = (
                        address: encodeAddress(account),
                        hash: item.event.call?.args.proposalHash,
                        title: "tbd",
-                       motionSource: String(item.event.call?.args.proposal.__kind),
+                       propSource: String(item.event.call?.args.proposal.__kind),
+                       eventSource: String(item.event.call?.args.proposal.value.__kind),
                        eventHash: item.event.extrinsic?.hash,
                        eventDate: new Date(block.header.timestamp),
                        eventblockHeight: block.header.height
@@ -964,8 +919,7 @@ const decodeEvent = (
                 }
 
       } else if (e.isV1){
-          let propData = e.asV1
-          
+          let propData = e.asV1     
           return {name, 
                   args: {id: item.event.id,
                         proposalIndex: String(propData[1]),
@@ -975,6 +929,7 @@ const decodeEvent = (
                         hash: item.event.call?.args.proposalHash,
                         title: "tbd",
                         propSource: String(item.event.call?.args.proposal.__kind),
+                        eventSource: String(item.event.call?.args.proposal.value.__kind),
                         eventHash: item.event.extrinsic?.hash,
                         eventDate: new Date(block.header.timestamp),
                         eventblockHeight: block.header.height}
@@ -987,7 +942,6 @@ const decodeEvent = (
 
     case 'Council.Approved': {
       const e = new CouncilApprovedEvent(ctx, item.event)
-      // console.log(item.event)
       if (e.isV1090){
         let {proposalHash} = e.asV1090
 
@@ -1070,7 +1024,6 @@ const decodeEvent = (
 
     case 'Council.Disapproved': {
       const e = new CouncilDisapprovedEvent(ctx, item.event)
-      // console.log(item.event)
       if (e.isV1090){
         let {proposalHash} = e.asV1090
         return {name, 
@@ -1323,7 +1276,6 @@ const decodeEvent = (
     case 'Council.Voted': {
       const e = new CouncilVotedEvent(ctx, item.event)
       // console.log("\n\n Council.Voted:", item.event)
-      // const {refIndex, threshold} = e.asV1090
       if (e.isV1090){
         let {account, proposalHash, voted, yes, no} = e.asV1090
         // console.log("Council.Voted  Hash =====> \n", encodeHash(decodeHex(proposalHash)))
@@ -1400,8 +1352,7 @@ const decodeEvent = (
 
     case 'Bounties.BountyBecameActive': {
       const e = new BountiesBountyBecameActiveEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event)
+
       if (e.isV1090){
         let {index} = e.asV1090
 
@@ -1432,8 +1383,6 @@ const decodeEvent = (
 
     case 'Bounties.BountyCanceled': {
       const e = new BountiesBountyCanceledEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
 
       if (e.isV1090){
         let {index} = e.asV1090
@@ -1467,8 +1416,6 @@ const decodeEvent = (
 
     case 'Bounties.BountyClaimed': {
       const e = new BountiesBountyClaimedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
 
       if (e.isV1090){
         let {index, payout, beneficiary} = e.asV1090
@@ -1504,8 +1451,6 @@ const decodeEvent = (
 
     case 'Bounties.BountyExtended': {
       const e = new BountiesBountyExtendedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
       
       if (e.isV1090){
         let {index} = e.asV1090
@@ -1539,8 +1484,7 @@ const decodeEvent = (
 
     case 'Bounties.BountyProposed': {
       const e = new BountiesBountyProposedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(" =====> ", item.event)
+
       if (e.isV1090){
         let {index} = e.asV1090
 
@@ -1575,8 +1519,7 @@ const decodeEvent = (
 
     case 'Bounties.BountyRejected': {
       const e = new BountiesBountyRejectedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
+
       if (e.isV1090){
         let {index, bond} = e.asV1090
 
@@ -1608,7 +1551,6 @@ const decodeEvent = (
     }
 
 
-
     // Treasury EVENTS 
     case 'Treasury.Awarded': {
       const e = new TreasuryAwardedEvent(ctx, item.event)
@@ -1628,6 +1570,7 @@ const decodeEvent = (
           }
 
       } else if (e.isV1){
+
         let propData = e.asV1
         return {name, 
                 args: {id: item.event.id,
@@ -1639,6 +1582,7 @@ const decodeEvent = (
                       eventblockHeight: block.header.height
                     }
               }
+
       } else {
           console.log(item.name, " Type not available:", e)
           return null
@@ -1647,7 +1591,6 @@ const decodeEvent = (
 
     case 'Treasury.Proposed': {
       const e = new TreasuryProposedEvent(ctx, item.event)
-      // console.log("Events =====> ", item.event.call)
 
       if (e.isV1110){
         let {proposalIndex} = e.asV1110
@@ -1687,8 +1630,6 @@ const decodeEvent = (
 
     case 'Treasury.Rejected': {
       const e = new TreasuryRejectedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
       if (e.isV1110){
         let {proposalIndex, slashed} = e.asV1110
 
@@ -1724,8 +1665,7 @@ const decodeEvent = (
 
     case 'Treasury.SpendApproved': {
       const e = new TreasurySpendApprovedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log(item.event.call)
+
       if (e.isV1170){
         let {proposalIndex, amount,  beneficiary} = e.asV1170
 
@@ -1747,20 +1687,17 @@ const decodeEvent = (
       }
     }
 
-
     case 'Preimage.Noted': {
       const e = new PreimageNotedEvent(ctx, item.event)
-      // console.log("Initial name =====> ", name)
-      // console.log("encodeHash(decodeHex ::::: args.hash:  ", encodeHash(decodeHex(item.event.args.hash)))
-      // // console.log("encodeHash(decodeHex ::::: args.bytes:  ", encodeHash(item.event.call?.args.bytes))
-      // console.log("Event hash ::::: extrinsics :  ", item.event.extrinsic?.hash)
+      console.log("\n\n Bounties events ::::", item.event)
+      console.log("\n\n Bounties Call ::::", item.event.call)
       if (e.isV1110){
         let {hash} = e.asV1110
 
         return {name, 
                 args: {id: item.event.id,
-                       hash: encodeHash(hash),
-                       title: "tbd",
+                       proposalHash: item.event.args.hash,
+                       proposalData: item.event.call?.args.bytes,
                        address: getOriginAccountId(item.event.extrinsic?.call.origin),
                        eventHash: item.event.extrinsic?.hash,
                        eventDate: new Date(block.header.timestamp),

@@ -21,7 +21,7 @@ import {
   Proposals, Referenda, BountiesProposals, CouncilMotions,
   Account, MotionsVotes, ReferendaVotes, SecondedGroup, 
   TechComProposals, TechComProposalsVotes,  
-  TreasuryProposals, AllEvents
+  TreasuryProposals, AllEvents, EventPreImageNote 
 } from './model'
 
 // import {
@@ -53,6 +53,8 @@ import {getAccount,
         getReferenda, 
         getCouncilMotions, 
         getTreasuryProposals,
+        getTechComProposals,
+        getBountiesProposals,
         join, toMap
 } from './utils/common'
 
@@ -63,7 +65,8 @@ const processor = new SubstrateBatchProcessor()
 
 .setDataSource({
   // Lookup archive by the network name in the Subsquid registry
-  archive: lookupArchive("khala", {release: "FireSquid"})
+  archive: lookupArchive("khala", {release: "FireSquid"}),
+  chain: 'wss://priv-api.phala.network/khala/ws',
 })
 // .setBlockRange({ from:  2827620})
 
@@ -80,11 +83,6 @@ const processor = new SubstrateBatchProcessor()
 .addEvent("Democracy.NotPassed")
 .addEvent("Democracy.Cancelled")
 .addEvent("Democracy.Voted")
-
-// IDENTITY EVENTS
-.addEvent("Identity.IdentitySet")
-.addEvent("Identity.IdentityCleared")
-.addEvent("Identity.JudgementGiven")
 
 // TechnicalCommittee EVENTS
 .addEvent("TechnicalCommittee.Proposed")
@@ -120,6 +118,11 @@ const processor = new SubstrateBatchProcessor()
 .addEvent("Treasury.SpendApproved")
 
 .addEvent("Preimage.Noted")
+
+// IDENTITY EVENTS
+.addEvent("Identity.IdentitySet")
+.addEvent("Identity.IdentityCleared")
+.addEvent("Identity.JudgementGiven")
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
@@ -284,7 +287,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           
           const {id, proposalIndex, propTitle, proposalHash, address,  deposit, eventHash, eventDate, eventblockHeight} = args
           
-          // console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+          // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
           const accountId = getAccount(accountMap, String(address))
           const proposalId = getProposals(proposalsMap, String(proposalIndex))
 
@@ -346,7 +349,7 @@ processor.run(new TypeormDatabase(), async ctx => {
       case 'Democracy.Seconded': {
         const {id, proposalIndex, address,  eventHash, eventDate, eventblockHeight} = args
           
-        // console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getProposals(proposalsMap, String(proposalIndex))
 
@@ -381,7 +384,7 @@ processor.run(new TypeormDatabase(), async ctx => {
       case 'Democracy.ProposalCanceled': {
         const {id, proposalIndex, proposalHash, address,  eventHash, eventDate, eventblockHeight} = args
           
-        // console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getProposals(proposalsMap, String(proposalIndex))
 
@@ -425,7 +428,6 @@ processor.run(new TypeormDatabase(), async ctx => {
           break      
       }
   
-   
       // // REFERENDUMS EVENTS
       case 'Democracy.Started': {
         const {id,
@@ -440,7 +442,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
@@ -485,7 +487,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -497,9 +499,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                                         eventHash: eventHash,
                                       })
 
-        referendumId.startDate = eventDate
         referendumId.lastUpdateDate = eventDate
-        referendumId.startblockHeight = eventblockHeight    
         referendumId.lastUpdateblockHeight = eventblockHeight
         referendumId.statusReferendum = name
 
@@ -517,7 +517,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -529,9 +529,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                                         eventHash: eventHash,
                                       })
 
-        referendumId.startDate = eventDate
         referendumId.lastUpdateDate = eventDate
-        referendumId.startblockHeight = eventblockHeight    
         referendumId.lastUpdateblockHeight = eventblockHeight
         referendumId.statusReferendum = name
 
@@ -549,7 +547,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -561,9 +559,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                                         eventHash: eventHash,
                                       })
 
-        referendumId.startDate = eventDate
-        referendumId.lastUpdateDate = eventDate
-        referendumId.startblockHeight = eventblockHeight    
+        referendumId.lastUpdateDate = eventDate 
         referendumId.lastUpdateblockHeight = eventblockHeight
         referendumId.statusReferendum = name
 
@@ -588,7 +584,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: id:", String(eventHash), "Date: ", eventDate)       
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
@@ -626,7 +622,7 @@ processor.run(new TypeormDatabase(), async ctx => {
       
       //  // TechnicalCommittee EVENTS   
       //  case 'TechnicalCommittee.Proposed': {
-   
+          
       // }
   
       // case 'TechnicalCommittee.Approved': {
@@ -641,9 +637,51 @@ processor.run(new TypeormDatabase(), async ctx => {
    
       // }
   
-      // case 'TechnicalCommittee.Executed': {
-  
-      // }
+      case 'TechnicalCommittee.Executed': {
+        const {id,
+              resultVote,
+              threshold,
+              hash,
+              title,
+              address,
+              eventHash,
+              propSource,
+              eventDate,
+              eventblockHeight
+            } = args
+          
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getTechComProposals(techComPropsMap, String(hash))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(hash),
+                                        eventName: name,
+                                        proposalHash: hash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+          
+        proposalId.titleProposals = title
+        proposalId.propCreator = accountId
+        proposalId.proposalHash = hash
+        proposalId.threshold = threshold
+        proposalId.startDate = eventDate
+        proposalId.lastUpdateDate = eventDate
+        proposalId.startblockHeight = eventblockHeight    
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusProposals = name
+        proposalId.proposalSource= propSource
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
   
       // case 'TechnicalCommittee.MemberExecuted': {
   
@@ -654,83 +692,755 @@ processor.run(new TypeormDatabase(), async ctx => {
       // }
   
       // // Council EVENTS 
-      // case 'Council.Proposed': {
+      case 'Council.Proposed': {
+              const {id,
+                proposalIndex,
+                lengthBound,
+                voteType,
+                address,
+                hash,
+                title,
+                propSource,
+                eventSource,
+                eventHash,
+                eventDate,
+                eventblockHeight
+              } = args
+            
+          console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+          const accountId = getAccount(accountMap, String(address))
+          const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+          const eventStore = new AllEvents ({
+                                          id: String(id),
+                                          eventId: String(proposalIndex),
+                                          eventName: name,
+                                          proposalHash: hash,
+                                          eventOwner: accountId,
+                                          eventDate: eventDate,
+                                          eventblockHeight: eventblockHeight,
+                                          eventHash: eventHash,
+                                        })
+            
+          proposalId.titleMotions = title
+          proposalId.propCreator = accountId
+          proposalId.proposalHash = hash
+          proposalId.threshold = voteType
+          proposalId.startDate = eventDate
+          proposalId.lastUpdateDate = eventDate
+          proposalId.startblockHeight = eventblockHeight    
+          proposalId.lastUpdateblockHeight = eventblockHeight
+          proposalId.status = name
+          proposalId.proposalSource= propSource
+          proposalId.eventSource= eventSource
+
+          // await ctx.store.insert(eventStore)
+          await ctx.store.save(accountId)
+          await ctx.store.save(proposalId)
+          await ctx.store.insert(eventStore)
+          break
+      }
   
-      // }
+      case 'Council.Approved': {
+          const {id,
+                proposalIndex,
+                lengthBound,
+                address,
+                hash,
+                eventHash,
+                eventDate,
+                eventblockHeight
+              } = args
+            
+          console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+          const accountId = getAccount(accountMap, String(address))
+          const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+          const eventStore = new AllEvents ({
+                                          id: String(id),
+                                          eventId: String(proposalIndex),
+                                          eventName: name,
+                                          proposalHash: hash,
+                                          eventOwner: accountId,
+                                          eventDate: eventDate,
+                                          eventblockHeight: eventblockHeight,
+                                          eventHash: eventHash,
+                                        })
+
+          proposalId.lastUpdateDate = eventDate
+          proposalId.lastUpdateblockHeight = eventblockHeight
+          proposalId.status = name
+
+
+          // await ctx.store.insert(eventStore)
+          await ctx.store.save(accountId)
+          await ctx.store.save(proposalId)
+          await ctx.store.insert(eventStore)
+          break
+      }
   
-      // case 'Council.Approved': {
+      case 'Council.Closed': {
+        const {id,
+          proposalIndex,
+          lengthBound,
+          address,
+          hash,
+          yesThreshold,
+          noThreshold,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        proposalHash: hash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+
+        proposalId.lastUpdateDate = eventDate
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.yesAfterThreshold = yesThreshold
+        proposalId.noAfterThreshold = noThreshold
+        proposalId.status = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+      }
   
-      // }
+      case 'Council.Disapproved': {
+        const {id,
+          proposalIndex,
+          lengthBound,
+          address,
+          hash,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        proposalHash: hash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+
+        proposalId.lastUpdateDate = eventDate
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+      }
   
-      // case 'Council.Closed': {
+      case 'Council.Executed': {
+        const {id,
+          proposalIndex,
+          lengthBound,
+          address,
+          hash,
+          resultVote,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        proposalHash: hash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+
+        proposalId.lastUpdateDate = eventDate
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+
+      }
   
-      // }
+      case 'Council.MemberExecuted': {
+        const {id,
+          proposalIndex,
+          lengthBound,
+          address,
+          hash,
+          resultVote,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        proposalHash: hash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+
+        proposalId.lastUpdateDate = eventDate
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+      }
   
-      // case 'Council.Disapproved': {
-  
-      // }
-  
-      // case 'Council.Executed': {
-  
-      // }
-  
-      // case 'Council.MemberExecuted': {
-   
-      // }
-  
-      // case 'Council.Voted': {
-  
-      // }
-  
-      // // Bounties EVENTS 
-      // case 'Bounties.BountyAwarded': {
-   
-      // }
-  
-      // case 'Bounties.BountyBecameActive': {
-   
-      // }
-  
-      // case 'Bounties.BountyCanceled': {
-   
-      // }
-  
-      // case 'Bounties.BountyClaimed': {
-  
-      // }
-  
-      // case 'Bounties.BountyExtended': {
-  
-      // }
-  
-      // case 'Bounties.BountyProposed': {
-  
-      // }
-  
-      // case 'Bounties.BountyRejected': {
-  
-      // }
-  
-  
-      // // Treasury EVENTS 
-      // case 'Treasury.Awarded': {
-   
-      // }
-  
-      // case 'Treasury.Proposed': {
-   
-      // }
-  
-      // case 'Treasury.Rejected': {
-  
-      // }
-  
-      // case 'Treasury.SpendApproved': {
-  
-      // }
+      case 'Council.Voted': {
+        // voteStatus: voted,
+
+        const {id,
+          proposalIndex,
+          lengthBound,
+          address,
+          hash,
+          voteStatus,
+          yesCount,
+          noCount,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        proposalHash: hash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+
+
+        const motionVote = new MotionsVotes ({
+          id: String(id),
+          motionHash: hash,
+          motionsId: proposalId,
+          memberAddress: accountId,
+          approve: String(voteStatus),
+          nbAyes: yesCount,
+          nbNay: noCount,
+          eventHash: eventHash,
+          lastUpdateDate: eventDate,
+          lastUpdateblockHeight: eventblockHeight
+ 
+        })
 
 
 
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        await ctx.store.insert(motionVote)
+        break  
+      }
+  
+      // Bounties EVENTS 
+      case 'Bounties.BountyAwarded': {
+        const {id,
+          proposalIndex,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+        proposalId.beneficiary= accountId    
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
+  
+      case 'Bounties.BountyBecameActive': {
+        const {id,
+          proposalIndex,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+          
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+      }
+  
+      case 'Bounties.BountyCanceled': {
+        const {id,
+          proposalIndex,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+          
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
+  
+      case 'Bounties.BountyClaimed': {
+        const {id,
+          proposalIndex,
+          bountyPayout,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+        proposalId.bountyAmount = bountyPayout
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+      }
+  
+      case 'Bounties.BountyExtended': {
+        const {id,
+          proposalIndex,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+          
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
+  
+      case 'Bounties.BountyProposed': {
+        const {id,
+          proposalIndex,
+          title,
+          bountyPayout,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+        
+        proposalId.reason = title                             
+        proposalId.bountyAmount = bountyPayout
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break  
+      }
+  
+      case 'Bounties.BountyRejected': {
+        const {id,
+          proposalIndex,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+          
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.statusBounties = name
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
+  
+  
+      // Treasury EVENTS 
+      case 'Treasury.Awarded': {
+        const {id,
+          proposalIndex,
+          awardAccount,
+          awardAmount,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(awardAccount))
+        const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+        proposalId.beneficiary= accountId   
+        proposalId.amount= awardAmount   
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name  
+
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+
+      }
+  
+      case 'Treasury.Proposed': {
+        const {id,
+          proposalIndex,
+          awardAccount,
+          title,
+          address,
+          awardAmount,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
+        const awardAccountId = getAccount(accountMap, String(awardAccount))   
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+                      
+        proposalId.titleProposals = title  
+        proposalId.propCreator = accountId                                 
+        proposalId.beneficiary = awardAccountId  
+        proposalId.amount= awardAmount   
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name   
+
+        await ctx.store.save(awardAccountId)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
+  
+      case 'Treasury.Rejected': {
+        const {id,
+          proposalIndex,
+          address,
+          slashedAmount,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+                                                       
+        proposalId.slashAmount= slashedAmount  
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name   
+
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+
+      }
+  
+      case 'Treasury.SpendApproved': {
+        const {id,
+          proposalIndex,
+          awardAccount,
+          address,
+          awardAmount,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
+        const awardAccountId = getAccount(accountMap, String(awardAccount))   
+        const accountId = getAccount(accountMap, String(address))
+        const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalIndex),
+                                        eventName: name,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+                      
+        // proposalId.beneficiary = awardAccountId  
+        proposalId.amount= awardAmount   
+        proposalId.lastUpdateDate = eventDate  
+        proposalId.lastUpdateblockHeight = eventblockHeight
+        proposalId.status = name   
+
+        await ctx.store.save(awardAccountId)
+        await ctx.store.save(accountId)
+        await ctx.store.save(proposalId)
+        await ctx.store.insert(eventStore)
+        break
+      }
+
+
+      case 'Preimage.Noted': {
+
+        const {id,
+          proposalHash,
+          proposalData,
+          address,
+          eventHash,
+          eventDate,
+          eventblockHeight
+        } = args
+      
+        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        const accountId = getAccount(accountMap, String(address))
+
+        const eventStore = new AllEvents ({
+                                        id: String(id),
+                                        eventId: String(proposalHash),
+                                        eventName: name,
+                                        proposalHash: proposalHash,
+                                        eventOwner: accountId,
+                                        eventDate: eventDate,
+                                        eventblockHeight: eventblockHeight,
+                                        eventHash: eventHash,
+                                      })
+
+
+        const preimageNote = new EventPreImageNote({
+          id: String(id),
+          proposalHash: proposalHash,
+          proposalData: proposalData,
+          eventOwner: accountId,
+          eventHash: eventHash,
+          eventDate: eventDate,
+          eventblockHeight: eventblockHeight
+
+        })
+
+
+
+        // await ctx.store.insert(eventStore)
+        await ctx.store.save(accountId)
+        await ctx.store.insert(eventStore)
+        await ctx.store.insert(preimageNote)
+        break  
+
+      }
 
 
 
@@ -740,6 +1450,9 @@ processor.run(new TypeormDatabase(), async ctx => {
 
 
   }
+  
+  await queryIdentities(ctx, [...identityUpdatedAccountIdSet], accountMap)
+
 
   for (const x of [
     accountMap,
@@ -748,7 +1461,8 @@ processor.run(new TypeormDatabase(), async ctx => {
     treasuryPropsMap,
     bountyPropsMap,
     councilPropsMap,
-    techComPropsMap
+    techComPropsMap,
+
   ]) {
     if (x instanceof Map) {
       await ctx.store.save([...x.values()])

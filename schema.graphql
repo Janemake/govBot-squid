@@ -18,20 +18,23 @@ type CouncilMotions @entity {
   id: ID! 
   titleMotions: String
   propCreator: Account
-  startDate: DateTime
-  endDate: DateTime
-  startblockHeight: Int
-  endblockHeight: Int
-  proposalHash: String! @unique
+  proposalHash: String
   proposalSource: String
+  eventSource: String
   threshold: Int
+  yesAfterThreshold: Int
+  noAfterThreshold: Int
   votes: [MotionsVotes] @derivedFrom (field: "motionsId")
+  startDate: DateTime
+  lastUpdateDate: DateTime
+  startblockHeight: Int
+  lastUpdateblockHeight: Int
   status: String
 }
 
 type MotionsVotes @entity {
   id: ID!  #index
-  motionHash: String! @unique
+  motionHash: String
   motionsId: CouncilMotions!
   memberAddress: Account!
   approve: String
@@ -39,7 +42,6 @@ type MotionsVotes @entity {
   nbNay: Int
   eventHash: String
   lastUpdateDate: DateTime
-  startblockHeight: Int
   lastUpdateblockHeight: Int
 }
 
@@ -50,11 +52,12 @@ type TreasuryProposals @entity {
   beneficiary: Account
   amount: BigInt
   slashAmount: BigInt
+  lastEventOwner: Account
   startDate: DateTime
-  endDate: DateTime
-  proposalHash: String! @unique
+  lastUpdateDate: DateTime
+  proposalHash: String
   startblockHeight: Int
-  endblockHeight: Int
+  lastUpdateblockHeight: Int
   motionHash: String
   motionType: String
   status: String
@@ -67,7 +70,7 @@ type BountiesProposals @entity {
   beneficiary: Account
   curator: Account
   bountyAmount: BigInt
-  bountyHash: String! @unique
+  bountyHash: String
   startDate: DateTime
   lastUpdateDate: DateTime
   startblockHeight: Int
@@ -112,7 +115,7 @@ type Proposals @entity {
   deposit: BigInt
   startDate: DateTime
   lastUpdateDate: DateTime
-  proposalHash: String! @unique
+  proposalHash: String
   nbSeconder: Int
   seconders: [SecondedGroup] @derivedFrom (field: "propIdx")
   startblockHeight: Int
@@ -137,7 +140,7 @@ type TechComProposals @entity {
   threshold: String
   startDate: DateTime
   lastUpdateDate: DateTime
-  proposalHash: String! @unique
+  proposalHash: String
   proposalSource: String
   votes: [TechComProposalsVotes] @derivedFrom (field: "propId")
   startblockHeight: Int
@@ -167,4 +170,15 @@ type AllEvents @entity {
   eventDate: DateTime
   eventblockHeight: Int
   eventHash: String
+}
+
+
+type EventPreImageNote @entity {
+  id: ID! 
+  proposalHash: String
+  proposalData: String
+  eventOwner: Account
+  eventHash: String
+  eventDate: DateTime
+  eventblockHeight: Int
 }

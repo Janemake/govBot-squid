@@ -29,9 +29,8 @@ export class BountiesProposals {
     @Column_("numeric", {transformer: marshal.bigintTransformer, nullable: true})
     bountyAmount!: bigint | undefined | null
 
-    @Index_({unique: true})
-    @Column_("text", {nullable: false})
-    bountyHash!: string
+    @Column_("text", {nullable: true})
+    bountyHash!: string | undefined | null
 
     @Column_("timestamp with time zone", {nullable: true})
     startDate!: Date | undefined | null
