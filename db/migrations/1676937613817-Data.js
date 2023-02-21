@@ -1,5 +1,5 @@
-module.exports = class Data1675422094774 {
-    name = 'Data1675422094774'
+module.exports = class Data1676937613817 {
+    name = 'Data1676937613817'
 
     async up(db) {
         await db.query(`CREATE TABLE "seconded_group" ("id" character varying NOT NULL, "event_hash" text, "event_date" TIMESTAMP WITH TIME ZONE, "eventblock_height" integer, "prop_idx_id" character varying, "seconder_id" character varying, CONSTRAINT "PK_a2b67db76a239dfbc4ba4aa81fb" PRIMARY KEY ("id"))`)
@@ -33,7 +33,7 @@ module.exports = class Data1675422094774 {
         await db.query(`CREATE INDEX "IDX_e052962a1b843eccaf62e600e1" ON "bounties_proposals" ("curator_id") `)
         await db.query(`CREATE TABLE "all_events" ("id" character varying NOT NULL, "event_id" text, "event_name" text, "proposal_hash" text, "event_date" TIMESTAMP WITH TIME ZONE, "eventblock_height" integer, "event_hash" text, "event_owner_id" character varying, CONSTRAINT "PK_bbbcaa54adc9376df107e374298" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_6533cf4da320233f8013ad9c89" ON "all_events" ("event_owner_id") `)
-        await db.query(`CREATE TABLE "account" ("id" character varying NOT NULL, "account" text, "identity_display" text, "council_member" text, CONSTRAINT "PK_54115ee388cdb6d86bb4bf5b2ea" PRIMARY KEY ("id"))`)
+        await db.query(`CREATE TABLE "account" ("id" character varying NOT NULL, "account" text, "identity_display" text, "council_member" text, "technical_committee_member" text, CONSTRAINT "PK_54115ee388cdb6d86bb4bf5b2ea" PRIMARY KEY ("id"))`)
         await db.query(`CREATE UNIQUE INDEX "IDX_a120ffb28f7d5c34fa907eb7f8" ON "account" ("account") `)
         await db.query(`CREATE TABLE "event_pre_image_note" ("id" character varying NOT NULL, "proposal_hash" text, "proposal_data" text, "event_hash" text, "event_date" TIMESTAMP WITH TIME ZONE, "eventblock_height" integer, "event_owner_id" character varying, CONSTRAINT "PK_1624a976bd32941825446ee56e5" PRIMARY KEY ("id"))`)
         await db.query(`CREATE INDEX "IDX_78d15f960ff430e079fd563fb5" ON "event_pre_image_note" ("event_owner_id") `)

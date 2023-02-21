@@ -24,30 +24,6 @@ import {
   TreasuryProposals, AllEvents, EventPreImageNote 
 } from './model'
 
-// import {
-//       DemocracyProposedEvent, 
-//       DemocracyTabledEvent, 
-//       DemocracyExternalTabledEvent,
-//       DemocracyStartedEvent, 
-//       DemocracyPassedEvent, 
-//       DemocracyNotPassedEvent,
-//       DemocracyCancelledEvent, 
-//       DemocracyVotedEvent, 
-//       DemocracySecondedEvent,
-//       DemocracyProposalCanceledEvent, 
-//       IdentityIdentitySetEvent,
-//       IdentityIdentityClearedEvent, 
-//       IdentityJudgementGivenEvent,
-//       BountiesBountyAwardedEvent, 
-//       BountiesBountyBecameActiveEvent, 
-//       BountiesBountyCanceledEvent,
-//       BountiesBountyClaimedEvent, 
-//       BountiesBountyExtendedEvent,
-//       BountiesBountyProposedEvent,
-//       BountiesBountyRejectedEvent
-// } from './types/events'
-
-
 import {getAccount,
         getProposals, 
         getReferenda, 
@@ -58,8 +34,163 @@ import {getAccount,
         join, toMap
 } from './utils/common'
 
-import {queryIdentities} from './utils/identity'
+import {queryIdentities,
+  queryCouncilMembers        
+} from './utils/identity'
 import { Block } from './types/support'
+
+// const eventOptions = {
+//   data: {
+//       event: {
+//           args: true,
+//           extrinsic: true,
+//       },
+
+//   } as const,
+// } as const
+
+// const eventOptionsWithCall = {
+//   data: {
+//       event: {
+//           args: true,
+//           call: true,
+//           extrinsic: true
+//       }, 
+//   } as const,
+// } as const
+
+// const eventOptionsWithCallArgs = {
+//   data: {
+//       event: {
+//           args: true,
+//           call: {
+//             args: true
+//           },
+//           extrinsic: {
+//             hash: true,
+//             call: true
+//           }
+
+//       },
+//   } as const,
+// } as const
+
+// const eventOptionsWithPhase = {
+//   data: {
+//       event: {
+//           args: true,
+//           call: {
+//                   args: true,
+//                   // name: true
+//           },
+//           extrinsic: {
+//                     hash: true,
+//                     call: true
+//           },
+//           phase:true
+
+//       },
+//   } as const,
+// } as const
+
+// const eventOptionsNoExtrinsic = {
+//   data: {
+//       event: {
+//           args: true
+//       }
+//   } as const,
+// } as const
+
+// const eventOptionsExtrinsicCall = {
+//   data: {
+//       event: {
+//           args: true,
+//           extrinsic: {
+//               hash: true,
+//               call: true
+//           }
+//       }
+//   } as const,
+// } as const
+
+// const eventOptionsExtrinsicHash = {
+//   data: {
+//       event: {
+//           args: true,
+//           extrinsic: {
+//               hash: true
+//           }
+//       }
+//   } as const,
+// } as const
+
+const eventOptions = {
+  data: {
+      event: {
+          args: true,
+          extrinsic: true,
+      },
+
+  } as const,
+} as const
+
+const eventOptionsWithCall = {
+  data: {
+      event: {
+          args: true,
+          call: true,
+          extrinsic: true
+      }, 
+  } as const,
+} as const
+
+const eventOptionsWithCallArgs = {
+  data: {
+      event: {
+          args: true,
+          call: true,
+          extrinsic:true
+      },
+  } as const,
+} as const
+
+const eventOptionsWithPhase = {
+  data: {
+      event: {
+          args: true,
+          call: true,
+          extrinsic: true,
+          phase:true
+      },
+  } as const,
+} as const
+
+const eventOptionsNoExtrinsic = {
+  data: {
+      event: {
+          args: true
+      }
+  } as const,
+} as const
+
+const eventOptionsExtrinsicCall = {
+  data: {
+      event: {
+          args: true,
+          extrinsic: true
+      }
+  } as const,
+} as const
+
+const eventOptionsExtrinsicHash = {
+  data: {
+      event: {
+          args: true,
+          extrinsic: true
+      }
+  } as const,
+} as const
+
 
 const processor = new SubstrateBatchProcessor()
 
@@ -71,58 +202,62 @@ const processor = new SubstrateBatchProcessor()
 // .setBlockRange({ from:  2827620})
 
 // PROPOSALS EVENTS
-.addEvent("Democracy.Proposed")
-.addEvent("Democracy.Tabled")
-.addEvent("Democracy.ExternalTabled")
-.addEvent("Democracy.Seconded")
-.addEvent("Democracy.ProposalCanceled")
+.addEvent("Democracy.Proposed", eventOptionsExtrinsicCall)
 
-// REFERENDA EVENTS
-.addEvent("Democracy.Started")
-.addEvent("Democracy.Passed")
-.addEvent("Democracy.NotPassed")
-.addEvent("Democracy.Cancelled")
-.addEvent("Democracy.Voted")
+.addEvent("Democracy.Tabled", eventOptionsNoExtrinsic)
 
-// TechnicalCommittee EVENTS
-.addEvent("TechnicalCommittee.Proposed")
-.addEvent("TechnicalCommittee.Voted")
-.addEvent("TechnicalCommittee.Approved")
-.addEvent("TechnicalCommittee.Disapproved")
-.addEvent("TechnicalCommittee.Executed")
-.addEvent("TechnicalCommittee.MemberExecuted")
-.addEvent("TechnicalCommittee.Closed")
+.addEvent("Democracy.ExternalTabled", eventOptionsNoExtrinsic)
 
-// COUNCIL EVENTS
-.addEvent("Council.Proposed")
-.addEvent("Council.Voted")
-.addEvent("Council.Approved")
-.addEvent("Council.Disapproved")
-.addEvent("Council.Executed")
-.addEvent("Council.MemberExecuted")
-.addEvent("Council.Closed")
-
-// Bounties EVENTS
-.addEvent("Bounties.BountyProposed")
-.addEvent("Bounties.BountyRejected")
-.addEvent("Bounties.BountyBecameActive")
-.addEvent("Bounties.BountyAwarded")
-.addEvent("Bounties.BountyClaimed")
-.addEvent("Bounties.BountyCanceled")
-.addEvent("Bounties.BountyExtended")
-
-// TREASURY EVENTS 'Preimage.Noted'
-.addEvent("Treasury.Proposed")
-.addEvent("Treasury.Awarded")
-.addEvent("Treasury.Rejected")
-.addEvent("Treasury.SpendApproved")
-
-.addEvent("Preimage.Noted")
+.addEvent("Democracy.Seconded", eventOptionsExtrinsicCall)
+.addEvent("Democracy.ProposalCanceled", eventOptionsExtrinsicCall)
 
 // IDENTITY EVENTS
-.addEvent("Identity.IdentitySet")
-.addEvent("Identity.IdentityCleared")
-.addEvent("Identity.JudgementGiven")
+
+.addEvent("Identity.IdentitySet", eventOptionsWithCall)
+.addEvent("Identity.IdentityCleared" , eventOptionsWithCall)
+
+// REFERENDA EVENTS
+.addEvent("Democracy.Started", eventOptionsWithPhase)
+.addEvent("Democracy.Passed", eventOptionsExtrinsicHash )
+.addEvent("Democracy.NotPassed", eventOptionsExtrinsicHash )
+.addEvent("Democracy.Cancelled", eventOptionsExtrinsicHash )
+.addEvent("Democracy.Voted", eventOptionsExtrinsicHash)
+
+// TechnicalCommittee EVENTS
+// .addEvent("TechnicalCommittee.Proposed", eventOptionsExtrinsicHash)
+// .addEvent("TechnicalCommittee.Voted", eventOptionsExtrinsicHash)
+// .addEvent("TechnicalCommittee.Approved", eventOptionsExtrinsicHash)
+// .addEvent("TechnicalCommittee.Disapproved", eventOptionsExtrinsicHash)
+.addEvent("TechnicalCommittee.Executed", eventOptionsWithCallArgs)
+// .addEvent("TechnicalCommittee.MemberExecuted", eventOptionsWithCallArgs)
+// .addEvent("TechnicalCommittee.Closed", eventOptionsExtrinsicHash)
+
+// COUNCIL EVENTS
+.addEvent("Council.Proposed", eventOptionsWithCallArgs)
+.addEvent("Council.Voted", eventOptionsWithCallArgs)
+.addEvent("Council.Approved", eventOptionsWithCallArgs)
+.addEvent("Council.Disapproved", eventOptionsWithCallArgs)
+.addEvent("Council.Executed", eventOptionsWithCallArgs)
+.addEvent("Council.MemberExecuted", eventOptionsWithCall)
+.addEvent("Council.Closed", eventOptionsWithCallArgs)
+
+// Bounties EVENTS
+.addEvent("Bounties.BountyProposed", eventOptionsWithCall)
+.addEvent("Bounties.BountyBecameActive", eventOptionsExtrinsicHash)
+.addEvent("Bounties.BountyAwarded", eventOptionsExtrinsicHash)
+.addEvent("Bounties.BountyClaimed", eventOptionsExtrinsicHash)
+.addEvent("Bounties.BountyCanceled", eventOptionsExtrinsicCall)
+.addEvent("Bounties.BountyExtended", eventOptionsExtrinsicCall)
+.addEvent("Bounties.BountyRejected", eventOptionsExtrinsicHash)
+
+// TREASURY EVENTS 'Preimage.Noted'
+.addEvent("Treasury.Proposed", eventOptionsExtrinsicCall)
+.addEvent("Treasury.Awarded", eventOptionsExtrinsicHash)
+.addEvent("Treasury.Rejected", eventOptionsExtrinsicCall)
+.addEvent("Treasury.SpendApproved", eventOptionsExtrinsicCall)
+
+.addEvent("Preimage.Noted", eventOptionsWithCallArgs)
+
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
@@ -160,21 +295,21 @@ processor.run(new TypeormDatabase(), async ctx => {
           referendaIdSet.add(String(args.proposalIndex))
     }
 
-    if (name === 'TechnicalCommittee.Executed'||
-       name === 'TechnicalCommittee.Approved' ||
-       name === 'TechnicalCommittee.Closed' ||
-       name === 'TechnicalCommittee.Proposed' ||
-       name === 'TechnicalCommittee.Disapproved' ||
-       name === 'TechnicalCommittee.MemberExecuted' ||
-       name === 'TechnicalCommittee.Voted') {
+    if (name === 'TechnicalCommittee.Executed'
+    //    name === 'TechnicalCommittee.Approved' ||
+    //    name === 'TechnicalCommittee.Closed' ||
+    //    name === 'TechnicalCommittee.Proposed' ||
+    //    name === 'TechnicalCommittee.Disapproved' ||
+    //    name === 'TechnicalCommittee.MemberExecuted' ||
+    //    name === 'TechnicalCommittee.Voted'
+       ) {
         // console.log("name: ===>", name)
         techComPropIdSet.add(String(args.hash))
     }  
 
-    if (name === 'Identity.IdentitySet' ||
-       name === 'Identity.IdentityCleared' ||
-       name === 'Identity.JudgementGiven'
-    ) {
+    if ((name === 'Identity.IdentitySet' ||
+       name === 'Identity.IdentityCleared'
+       ) && (args.whoAddress != undefined))  {
       identityUpdatedAccountIdSet.add(String(args.whoAddress))
       accountIds.add(String(args.whoAddress))
     }    
@@ -198,7 +333,7 @@ processor.run(new TypeormDatabase(), async ctx => {
         // console.log("name: ===>", name)
         treasuryIdSet.add(String(args.proposalIndex))
 
-        if (name != 'Treasury.Rejected'){
+        if (name != 'Treasury.Rejected' && (args.awardAccount != undefined) ){
           accountIds.add(String(args.awardAccount))  
         }
     }  
@@ -215,22 +350,22 @@ processor.run(new TypeormDatabase(), async ctx => {
         bountyIdSet.add(String(args.proposalIndex))
 
         if (name != 'Bounties.BountyBecameActive' && 
-            name != 'Bounties.BountyRejected'){
+            name != 'Bounties.BountyRejected' && args.address != undefined) {
             accountIds.add(String(args.address))  
         }
     }  
 
-    if (name === 'Council.Executed'||
+    if ((name === 'Council.Executed'||
        name === 'Council.Approved' ||
        name === 'Council.Closed' ||
        name === 'Council.Proposed' ||
        name === 'Council.Disapproved' ||
        name === 'Council.MemberExecuted' ||
        name === 'Council.Voted' ||
-       name === 'TechnicalCommittee.Proposed' ||
-       name === 'TechnicalCommittee.MemberExecuted' ||
+      //  name === 'TechnicalCommittee.Proposed' ||
+      //  name === 'TechnicalCommittee.MemberExecuted' ||
        name === 'TechnicalCommittee.Executed' ||
-       name === 'TechnicalCommittee.Voted' ||
+      //  name === 'TechnicalCommittee.Voted' ||
 
        name === 'Treasury.SpendApproved' ||
        name === 'Treasury.Rejected' ||
@@ -240,7 +375,7 @@ processor.run(new TypeormDatabase(), async ctx => {
        name === 'Democracy.Seconded' ||
        name === 'Democracy.ProposalCanceled' ||
        name === 'Democracy.Voted'
-    ) {
+    ) && (args.address != undefined)) {
         // console.log("name: ===>", name)
         accountIds.add(String(args.address))  
 
@@ -1308,6 +1443,8 @@ processor.run(new TypeormDatabase(), async ctx => {
         proposalId.propCreator = accountId                                 
         proposalId.beneficiary = awardAccountId  
         proposalId.amount= awardAmount   
+        proposalId.startDate = eventDate  
+        proposalId.startblockHeight = eventblockHeight
         proposalId.lastUpdateDate = eventDate  
         proposalId.lastUpdateblockHeight = eventblockHeight
         proposalId.status = name   
@@ -1394,7 +1531,6 @@ processor.run(new TypeormDatabase(), async ctx => {
         break
       }
 
-
       case 'Preimage.Noted': {
 
         const {id,
@@ -1420,7 +1556,6 @@ processor.run(new TypeormDatabase(), async ctx => {
                                         eventHash: eventHash,
                                       })
 
-
         const preimageNote = new EventPreImageNote({
           id: String(id),
           proposalHash: proposalHash,
@@ -1432,8 +1567,6 @@ processor.run(new TypeormDatabase(), async ctx => {
 
         })
 
-
-
         // await ctx.store.insert(eventStore)
         await ctx.store.save(accountId)
         await ctx.store.insert(eventStore)
@@ -1441,17 +1574,11 @@ processor.run(new TypeormDatabase(), async ctx => {
         break  
 
       }
-
-
-
     }
-
-
-
-
   }
   
   await queryIdentities(ctx, [...identityUpdatedAccountIdSet], accountMap)
+  await queryCouncilMembers(ctx, accountMap)
 
 
   for (const x of [

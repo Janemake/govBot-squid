@@ -26,6 +26,9 @@ export class Account {
     @Column_("text", {nullable: true})
     councilMember!: string | undefined | null
 
+    @Column_("text", {nullable: true})
+    technicalCommitteeMember!: string | undefined | null
+
     @OneToMany_(() => Proposals, e => e.propCreator)
     prop!: Proposals[]
 

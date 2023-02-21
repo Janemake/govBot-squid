@@ -16,7 +16,7 @@ import {
 
   IdentityIdentitySetEvent,
   IdentityIdentityClearedEvent,
-  IdentityJudgementGivenEvent,
+  // IdentityJudgementGivenEvent,
 
   BountiesBountyAwardedEvent,
   BountiesBountyBecameActiveEvent,
@@ -34,13 +34,13 @@ import {
   CouncilProposedEvent,
   CouncilVotedEvent,
   
-  TechnicalCommitteeApprovedEvent,
-  TechnicalCommitteeClosedEvent,
-  TechnicalCommitteeDisapprovedEvent,
+  // TechnicalCommitteeApprovedEvent,
+  // TechnicalCommitteeClosedEvent,
+  // TechnicalCommitteeDisapprovedEvent,
   TechnicalCommitteeExecutedEvent,
-  TechnicalCommitteeMemberExecutedEvent,
-  TechnicalCommitteeProposedEvent,
-  TechnicalCommitteeVotedEvent,
+  // TechnicalCommitteeMemberExecutedEvent,
+  // TechnicalCommitteeProposedEvent,
+  // TechnicalCommitteeVotedEvent,
 
   PreimageNotedEvent,
   
@@ -87,7 +87,7 @@ const decodeEvent = (
     // PROPOSALS EVENTS
     case 'Democracy.Proposed': {
       const e = new DemocracyProposedEvent(ctx, item.event)
-  
+      console.log("", )
       if (e.isV1090){
         let {proposalIndex, deposit} = e.asV1090
         return {name, 
@@ -96,7 +96,7 @@ const decodeEvent = (
                       proposalIndex: String(proposalIndex),
                       propTitle: "tbd",
                       proposalHash: item.event.call?.args.proposalHash,
-                      address: getOriginAccountId(item.event.call?.origin),
+                      address: getOriginAccountId(item.event.extrinsic?.call.origin),
                       deposit: BigInt(deposit),
                       eventHash: item.event.extrinsic?.hash,
                       eventDate: new Date(block.header.timestamp),
@@ -113,7 +113,7 @@ const decodeEvent = (
                         proposalIndex: String(propData[0]),
                         propTitle: "tbd",
                         proposalHash: item.event.call?.args.proposalHash,
-                        address: getOriginAccountId(item.event.call?.origin),
+                        address: getOriginAccountId(item.event.extrinsic?.call.origin),
                         deposit: BigInt(propData[1]),
                         eventHash: item.event.extrinsic?.hash,
                         eventDate: new Date(block.header.timestamp),
@@ -240,22 +240,27 @@ const decodeEvent = (
     // IDENTITY EVENTS
     case 'Identity.IdentitySet': {
       const e = new IdentityIdentitySetEvent(ctx, item.event)
-
+      // console.log("::::::::::: IDENTITY SET ::::::::", item.event.call?.args)
+      // console.log("::::::::::: IDENTITY SET ::::::::", item.event.extrinsic)
+      // if (item.event.call?.name == 'Identity.set_identity') {
+      //   console.log("::::::::::: IDENTITY ::::::::", encodeHash(decodeHex(item.event.call?.args.info.display.value)))
+      // }
+      // if (item.event.call?.args.info.display.__kind != 'None') {
+      //   console.log("::::::::::: IDENTITY ::::::::", encodeHash(decodeHex(item.event.call?.args.info.display.value)))
+      // }
+      // console.log("::::::::::: IDENTITY ::::::::", Buffer.from(item.event.call?.args.info.display.value).toString())
       if (e.isV1090){
         let {who} = e.asV1090
-      
         return {name, 
                 args: {whoAddress: encodeAddress(who),
                         eventDate: new Date(block.header.timestamp),
                         eventblockHeight: block.header.height
                     }
                 }
-
       } else if (e.isV1){
           let who= e.asV1
           return {name, 
                   args: {whoAddress: encodeAddress(who),
-
                           eventDate: new Date(block.header.timestamp),
                           eventblockHeight: block.header.height
                       }
@@ -264,15 +269,11 @@ const decodeEvent = (
             console.log(item.name, " Type not available:", e)
             return null
       }      
-      
-
-
     }
     case 'Identity.IdentityCleared': {
       const e = new IdentityIdentityClearedEvent(ctx, item.event)
       if (e.isV1090){
         let {who} = e.asV1090
-      
         return {name, 
                 args: {whoAddress: encodeAddress(who),
                         eventDate: new Date(block.header.timestamp),
@@ -283,42 +284,14 @@ const decodeEvent = (
       } else if (e.isV1){
           let who= e.asV1
           return {name, 
-                  args: {whoAddress: encodeAddress(who[0]),
+                  args: { whoAddress: encodeAddress(who[0]),
                           eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height}
+                          eventblockHeight: block.header.height}
                   }
       } else {
             console.log(item.name, " Type not available:", e)
             return null
       }      
-    }
-    case 'Identity.JudgementGiven': {
-      const e = new IdentityJudgementGivenEvent(ctx, item.event)
-      // const 
-      if (e.isV1090){
-        let {target, registrarIndex} = e.asV1090
-      
-        return {name, 
-                args: {whoAddress: encodeAddress(target),
-                       registar: registrarIndex,
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-        }
-
-      } else if (e.isV1){
-          let target= e.asV1
-          return {name, 
-                  args: {whoAddress: encodeAddress(target[0]),
-                          registar: target[1],
-                          eventDate: new Date(block.header.timestamp),
-                          eventblockHeight: block.header.height
-                       }
-          }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }     
     }
 
     // REFERENDUMS EVENTS
@@ -422,8 +395,8 @@ const decodeEvent = (
     case 'Democracy.Started': {
       const e = new DemocracyStartedEvent(ctx, item.event)
       let address = "tbd"
-      if (item.event.call?.origin != undefined) {
-          address = getOriginAccountId(item.event.call?.origin)
+      if (item.event.extrinsic?.call.origin != undefined) {
+          address = getOriginAccountId(item.event.extrinsic?.call.origin)
       } else {
           address = "undefined"
       }
@@ -498,147 +471,147 @@ const decodeEvent = (
     }
     
      // TechnicalCommittee EVENTS   
-     case 'TechnicalCommittee.Proposed': {
-      const e = new TechnicalCommitteeProposedEvent(ctx, item.event)
+    //  case 'TechnicalCommittee.Proposed': {
+    //   const e = new TechnicalCommitteeProposedEvent(ctx, item.event)
 
-      if (e.isV1090){
-        let {account, proposalIndex, proposalHash, threshold} = e.asV1090
+    //   if (e.isV1090){
+    //     let {account, proposalIndex, proposalHash, threshold} = e.asV1090
 
-        return {name, 
-                args: {
-                        id: item.event.id,
-                        proposalIndex: String(proposalIndex),
-                        voteType: String(threshold),
-                        address: encodeAddress(account),
-                        hash: item.event.call?.args.proposal.proposalHash,
-                        title: "tbd",
-                        eventHash: item.event.extrinsic?.hash,
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {
+    //                     id: item.event.id,
+    //                     proposalIndex: String(proposalIndex),
+    //                     voteType: String(threshold),
+    //                     address: encodeAddress(account),
+    //                     hash: item.event.call?.args.proposal.proposalHash,
+    //                     title: "tbd",
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1){
-          let propData = e.asV1
-          return {name, 
-                  args: {
-                        id: item.event.id,
-                        proposalIndex: String(propData[1]),
-                        voteType: propData[3],
-                        creator: encodeAddress(propData[0]),
-                        hash: item.event.call?.args.proposal.proposalHash,
-                        title: "tbd",
-                        eventHash: item.event.extrinsic?.hash,
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height}
-                }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }
-    }
+    //   } else if (e.isV1){
+    //       let propData = e.asV1
+    //       return {name, 
+    //               args: {
+    //                     id: item.event.id,
+    //                     proposalIndex: String(propData[1]),
+    //                     voteType: propData[3],
+    //                     creator: encodeAddress(propData[0]),
+    //                     hash: item.event.call?.args.proposal.proposalHash,
+    //                     title: "tbd",
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height}
+    //             }
+    //   } else {
+    //         console.log(item.name, " Type not available:", e)
+    //         return null
+    //   }
+    // }
 
-    case 'TechnicalCommittee.Approved': {
-      const e = new TechnicalCommitteeApprovedEvent(ctx, item.event)
-      if (e.isV1090){
-        let {proposalHash} = e.asV1090
-        return {name, 
-                args: {
-                      id: item.event.id,
-                       proposalHash: item.event.call?.args.proposal.proposalHash,
-                       eventHash: item.event.extrinsic?.hash,
-                       eventDate: new Date(block.header.timestamp),
-                       eventblockHeight: block.header.height
-                    }
-                }
+    // case 'TechnicalCommittee.Approved': {
+    //   const e = new TechnicalCommitteeApprovedEvent(ctx, item.event)
+    //   if (e.isV1090){
+    //     let {proposalHash} = e.asV1090
+    //     return {name, 
+    //             args: {
+    //                   id: item.event.id,
+    //                    proposalHash: item.event.call?.args.proposal.proposalHash,
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                    eventDate: new Date(block.header.timestamp),
+    //                    eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1){
-          let propData = e.asV1
-          return {name, 
-                  args: {
-                        id: item.event.id,
-                        pproposalHash: item.event.call?.args.proposal.proposalHash,
-                        eventHash: item.event.extrinsic?.hash,
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height
-                      }
-                }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }
-    }
+    //   } else if (e.isV1){
+    //       let propData = e.asV1
+    //       return {name, 
+    //               args: {
+    //                     id: item.event.id,
+    //                     pproposalHash: item.event.call?.args.proposal.proposalHash,
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height
+    //                   }
+    //             }
+    //   } else {
+    //         console.log(item.name, " Type not available:", e)
+    //         return null
+    //   }
+    // }
 
-    case 'TechnicalCommittee.Closed': {
-      const e = new TechnicalCommitteeClosedEvent(ctx, item.event)
-      /**
-      * A proposal was closed because its threshold was reached or after its duration was up.
-      */
-      if (e.isV1090){
-        let {proposalHash, yes, no} = e.asV1090
+    // case 'TechnicalCommittee.Closed': {
+    //   const e = new TechnicalCommitteeClosedEvent(ctx, item.event)
+    //   /**
+    //   * A proposal was closed because its threshold was reached or after its duration was up.
+    //   */
+    //   if (e.isV1090){
+    //     let {proposalHash, yes, no} = e.asV1090
 
-        return {name, 
-                args: {
-                        id: item.event.id,
+    //     return {name, 
+    //             args: {
+    //                     id: item.event.id,
                   
-                       hash: item.event.call?.args.proposal.proposalHash,
-                       yesThreshold: yes,
-                       noThreshold: no,
-                       eventHash: item.event.extrinsic?.hash,
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //                    hash: item.event.call?.args.proposal.proposalHash,
+    //                    yesThreshold: yes,
+    //                    noThreshold: no,
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1){
-          let propData = e.asV1
-          return {name, 
-                  args: {
-                         id: item.event.id,
+    //   } else if (e.isV1){
+    //       let propData = e.asV1
+    //       return {name, 
+    //               args: {
+    //                      id: item.event.id,
                     
-                        hash: item.event.call?.args.proposal.proposalHash,
-                        yesThreshold: propData[1],
-                        noThreshold: propData[2],
-                        eventHash: item.event.extrinsic?.hash,
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height}
-                }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }
-    }
+    //                     hash: item.event.call?.args.proposal.proposalHash,
+    //                     yesThreshold: propData[1],
+    //                     noThreshold: propData[2],
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height}
+    //             }
+    //   } else {
+    //         console.log(item.name, " Type not available:", e)
+    //         return null
+    //   }
+    // }
 
-    case 'TechnicalCommittee.Disapproved': {
-      const e = new TechnicalCommitteeDisapprovedEvent(ctx, item.event)
-      if (e.isV1090){
-        let {proposalHash} = e.asV1090
-        return {name, 
-                args: {
-                  id: item.event.id,
+    // case 'TechnicalCommittee.Disapproved': {
+    //   const e = new TechnicalCommitteeDisapprovedEvent(ctx, item.event)
+    //   if (e.isV1090){
+    //     let {proposalHash} = e.asV1090
+    //     return {name, 
+    //             args: {
+    //               id: item.event.id,
                   
-                      proposalHash: item.event.call?.args.proposal.proposalHash,
-                      eventHash: item.event.extrinsic?.hash,
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //                   proposalHash: item.event.call?.args.proposal.proposalHash,
+    //                   eventHash: item.event.extrinsic?.hash,
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1){
-          let propData = e.asV1
-          return {name, 
-                  args: {
-                    id: item.event.id,
-                        pproposalHash: item.event.call?.args.proposal.proposalHash,
-                        eventHash: item.event.extrinsic?.hash,
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height}
-                }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }
-    }
+    //   } else if (e.isV1){
+    //       let propData = e.asV1
+    //       return {name, 
+    //               args: {
+    //                 id: item.event.id,
+    //                     pproposalHash: item.event.call?.args.proposal.proposalHash,
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height}
+    //             }
+    //   } else {
+    //         console.log(item.name, " Type not available:", e)
+    //         return null
+    //   }
+    // }
 
     case 'TechnicalCommittee.Executed': {
       const e = new TechnicalCommitteeExecutedEvent(ctx, item.event)
@@ -656,7 +629,7 @@ const decodeEvent = (
                         threshold: String(item.event.call?.args.threshold),
                         hash: prophash,
                         title: "tbd",
-                        address: getOriginAccountId(item.event.call?.origin),
+                        address: getOriginAccountId(item.event.extrinsic?.call.origin),
                         eventHash: item.event.extrinsic?.hash,
                         propSource: String(item.event.call?.args.proposal.__kind),
                         eventDate: new Date(block.header.timestamp),
@@ -673,7 +646,7 @@ const decodeEvent = (
                       threshold: String(item.event.call?.args.threshold),
                       hash: prophash,
                        title: "tbd",
-                       address: getOriginAccountId(item.event.call?.origin),
+                       address: getOriginAccountId(item.event.extrinsic?.call.origin),
                        eventHash: item.event.extrinsic?.hash,
                        propSource: String(item.event.call?.args.proposal.__kind),
                       eventDate: new Date(block.header.timestamp),
@@ -690,7 +663,7 @@ const decodeEvent = (
                       threshold: String(item.event.call?.args.threshold),
                       hash: prophash,
                        title: "tbd",
-                       address: getOriginAccountId(item.event.call?.origin),
+                       address: getOriginAccountId(item.event.extrinsic?.call.origin),
                        eventHash: item.event.extrinsic?.hash,
                        propSource: String(item.event.call?.args.proposal.__kind),
                       eventDate: new Date(block.header.timestamp),
@@ -707,7 +680,7 @@ const decodeEvent = (
                       threshold: String(item.event.call?.args.threshold),
                       hash: prophash,
                        title: "tbd",
-                       address: getOriginAccountId(item.event.call?.origin),
+                       address: getOriginAccountId(item.event.extrinsic?.call.origin),
                        eventHash: item.event.extrinsic?.hash,
                        propSource: String(item.event.call?.args.proposal.__kind),
                       eventDate: new Date(block.header.timestamp),
@@ -724,7 +697,7 @@ const decodeEvent = (
                         threshold: String(item.event.call?.args.threshold),
                         hash: prophash,
                         title: "tbd",
-                        address: getOriginAccountId(item.event.call?.origin),
+                        address: getOriginAccountId(item.event.extrinsic?.call.origin),
                         eventHash: item.event.extrinsic?.hash,
                         propSource: String(item.event.call?.args.proposal.__kind),
                         eventDate: new Date(block.header.timestamp),
@@ -742,7 +715,7 @@ const decodeEvent = (
                         threshold: String(item.event.call?.args.threshold),
                         hash: prophash,
                         title: "tbd",
-                        address: getOriginAccountId(item.event.call?.origin),
+                        address: getOriginAccountId(item.event.extrinsic?.call.origin),
                         eventHash: item.event.extrinsic?.hash,
                         propSource: String(item.event.call?.args.proposal.__kind),
                         eventDate: new Date(block.header.timestamp),
@@ -754,146 +727,146 @@ const decodeEvent = (
       }
     }
 
-    case 'TechnicalCommittee.MemberExecuted': {
-      const e = new TechnicalCommitteeMemberExecutedEvent(ctx, item.event)
+    // case 'TechnicalCommittee.MemberExecuted': {
+    //   const e = new TechnicalCommitteeMemberExecutedEvent(ctx, item.event)
 
-      if (e.isV1090){
-        let {proposalHash, result} = e.asV1090
+    //   if (e.isV1090){
+    //     let {proposalHash, result} = e.asV1090
 
-        return {name, 
-                args: {
-                  id: item.event.id,
-                  resultVote: result,
-                       hash: item.event.call?.args.proposal.proposalHash,
-                       address: getOriginAccountId(item.event.call?.origin),
-                       eventHash: item.event.extrinsic?.hash,
-                       propSource: String(item.event.call?.args.proposal.__kind),
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {
+    //               id: item.event.id,
+    //               resultVote: result,
+    //                    hash: item.event.call?.args.proposal.proposalHash,
+    //                    address: getOriginAccountId(item.event.extrinsic?.call.origin),
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                    propSource: String(item.event.call?.args.proposal.__kind),
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1110){
-        let {proposalHash, result} = e.asV1110
+    //   } else if (e.isV1110){
+    //     let {proposalHash, result} = e.asV1110
 
-        return {name, 
-                args: {
-                  id: item.event.id,
-                  resultVote: result,
-                       hash: item.event.call?.args.proposal.proposalHash,
-                       address: getOriginAccountId(item.event.call?.origin),
-                       eventHash: item.event.extrinsic?.hash,
-                       propSource: String(item.event.call?.args.proposal.__kind),
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {
+    //               id: item.event.id,
+    //               resultVote: result,
+    //                    hash: item.event.call?.args.proposal.proposalHash,
+    //                    address: getOriginAccountId(item.event.extrinsic?.call.origin),
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                    propSource: String(item.event.call?.args.proposal.__kind),
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1120){
-        let {proposalHash, result} = e.asV1120
+    //   } else if (e.isV1120){
+    //     let {proposalHash, result} = e.asV1120
 
-        return {name, 
-                args: {
-                          id: item.event.id,
-                          resultVote: result,
-                          hash: item.event.call?.args.proposal.proposalHash,
-                          address: getOriginAccountId(item.event.call?.origin),
-                          eventHash: item.event.extrinsic?.hash,
-                          propSource: String(item.event.call?.args.proposal.__kind),
-                          eventDate: new Date(block.header.timestamp),
-                          eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {
+    //                       id: item.event.id,
+    //                       resultVote: result,
+    //                       hash: item.event.call?.args.proposal.proposalHash,
+    //                       address: getOriginAccountId(item.event.extrinsic?.call.origin),
+    //                       eventHash: item.event.extrinsic?.hash,
+    //                       propSource: String(item.event.call?.args.proposal.__kind),
+    //                       eventDate: new Date(block.header.timestamp),
+    //                       eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1140){
-        let {proposalHash, result} = e.asV1140
+    //   } else if (e.isV1140){
+    //     let {proposalHash, result} = e.asV1140
 
-        return {name, 
-                args: {
-                      id: item.event.id,
-                      resultVote: result,
-                       hash: item.event.call?.args.proposal.proposalHash,
-                       address: getOriginAccountId(item.event.call?.origin),
-                       eventHash: item.event.extrinsic?.hash,
-                       propSource: String(item.event.call?.args.proposal.__kind),
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {
+    //                   id: item.event.id,
+    //                   resultVote: result,
+    //                    hash: item.event.call?.args.proposal.proposalHash,
+    //                    address: getOriginAccountId(item.event.extrinsic?.call.origin),
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                    propSource: String(item.event.call?.args.proposal.__kind),
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1199){
-        let {proposalHash, result} = e.asV1199
+    //   } else if (e.isV1199){
+    //     let {proposalHash, result} = e.asV1199
 
-        return {name, 
-                args: {
-                      id: item.event.id,
-                      resultVote: result,
-                       hash: item.event.call?.args.proposal.proposalHash,
-                       address: getOriginAccountId(item.event.call?.origin),
-                       eventHash: item.event.extrinsic?.hash,
-                       propSource: String(item.event.call?.args.proposal.__kind),
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {
+    //                   id: item.event.id,
+    //                   resultVote: result,
+    //                    hash: item.event.call?.args.proposal.proposalHash,
+    //                    address: getOriginAccountId(item.event.extrinsic?.call.origin),
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                    propSource: String(item.event.call?.args.proposal.__kind),
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1){
-          let propData = e.asV1
-          return {name, 
-                  args: {
-                        id: item.event.id,
-                        resultVote: propData[1],
-                        hash: item.event.call?.args.proposal.proposalHash,
-                        address: getOriginAccountId(item.event.call?.origin),
-                        eventHash: item.event.extrinsic?.hash,
-                        propSource: String(item.event.call?.args.proposal.__kind),
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height}
-                }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }
-    }
+    //   } else if (e.isV1){
+    //       let propData = e.asV1
+    //       return {name, 
+    //               args: {
+    //                     id: item.event.id,
+    //                     resultVote: propData[1],
+    //                     hash: item.event.call?.args.proposal.proposalHash,
+    //                     address: getOriginAccountId(item.event.extrinsic?.call.origin),
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     propSource: String(item.event.call?.args.proposal.__kind),
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height}
+    //             }
+    //   } else {
+    //         console.log(item.name, " Type not available:", e)
+    //         return null
+    //   }
+    // }
 
-    case 'TechnicalCommittee.Voted': {
-      const e = new TechnicalCommitteeVotedEvent(ctx, item.event)
-      // const {refIndex, threshold} = e.asV1090
-      if (e.isV1090){
-        let {account, proposalHash, voted, yes, no} = e.asV1090
+    // case 'TechnicalCommittee.Voted': {
+    //   const e = new TechnicalCommitteeVotedEvent(ctx, item.event)
+    //   // const {refIndex, threshold} = e.asV1090
+    //   if (e.isV1090){
+    //     let {account, proposalHash, voted, yes, no} = e.asV1090
 
-        return {name, 
-                args: {id: item.event.id,
-                       voter: encodeAddress(account),
-                       hash: item.event.call?.args.proposal.proposalHash,
-                       title: "tbd",
-                       voteStatus: voted,
-                       yesCount: yes,
-                       noCount: no,
-                       eventHash: item.event.extrinsic?.hash,
-                      eventDate: new Date(block.header.timestamp),
-                      eventblockHeight: block.header.height
-                    }
-                }
+    //     return {name, 
+    //             args: {id: item.event.id,
+    //                    voter: encodeAddress(account),
+    //                    hash: item.event.call?.args.proposal.proposalHash,
+    //                    title: "tbd",
+    //                    voteStatus: voted,
+    //                    yesCount: yes,
+    //                    noCount: no,
+    //                    eventHash: item.event.extrinsic?.hash,
+    //                   eventDate: new Date(block.header.timestamp),
+    //                   eventblockHeight: block.header.height
+    //                 }
+    //             }
 
-      } else if (e.isV1){
-          let propData = e.asV1
-          return {name, 
-                  args: {id: item.event.id,
-                        voter: encodeAddress(propData[0]),
-                        hash: item.event.call?.args.proposal.proposalHash,
-                        voteStatus: propData[2],
-                        yesCount: propData[3],
-                        noCount: propData[4],
-                        eventHash: item.event.extrinsic?.hash,
-                        eventDate: new Date(block.header.timestamp),
-                        eventblockHeight: block.header.height}
-                    }
-      } else {
-            console.log(item.name, " Type not available:", e)
-            return null
-      }
-    }
+    //   } else if (e.isV1){
+    //       let propData = e.asV1
+    //       return {name, 
+    //               args: {id: item.event.id,
+    //                     voter: encodeAddress(propData[0]),
+    //                     hash: item.event.call?.args.proposal.proposalHash,
+    //                     voteStatus: propData[2],
+    //                     yesCount: propData[3],
+    //                     noCount: propData[4],
+    //                     eventHash: item.event.extrinsic?.hash,
+    //                     eventDate: new Date(block.header.timestamp),
+    //                     eventblockHeight: block.header.height}
+    //                 }
+    //   } else {
+    //         console.log(item.name, " Type not available:", e)
+    //         return null
+    //   }
+    // }
 
     // Council EVENTS 
     case 'Council.Proposed': {
@@ -1492,8 +1465,8 @@ const decodeEvent = (
                 args: {id: item.event.id,
                        proposalIndex: String(index),
                        title: encodeHash(decodeHex(item.event.call?.args.description)),
-                       bountyPayout: BigInt(item.event.call?.args.value),
-                       address: getOriginAccountId(item.event.call?.origin),
+                       bountyPayout: BigInt(item.event.extrinsic?.call.args.value),
+                       address: getOriginAccountId(item.event.extrinsic?.call.origin),
                        eventDate: new Date(block.header.timestamp),
                        eventblockHeight: block.header.height
                 }
@@ -1505,8 +1478,8 @@ const decodeEvent = (
                   args: {id: item.event.id,
                         proposalIndex: String(propData),
                         title: encodeHash(decodeHex(item.event.call?.args.description)),
-                        bountyPayout: BigInt(item.event.call?.args.value),
-                        address: getOriginAccountId(item.event.call?.origin),
+                        bountyPayout: BigInt(item.event.extrinsic?.call.args.value),
+                        address: getOriginAccountId(item.event.extrinsic?.call.origin),
                         eventDate: new Date(block.header.timestamp),
                         eventblockHeight: block.header.height
                       }
@@ -1591,17 +1564,17 @@ const decodeEvent = (
 
     case 'Treasury.Proposed': {
       const e = new TreasuryProposedEvent(ctx, item.event)
-
+      // console.log("TREASURY BENEF:::::::: =======>>>>>", item.event.extrinsic?.call.args)
       if (e.isV1110){
         let {proposalIndex} = e.asV1110
 
         return {name, 
           args: {id: item.event.id,
                 proposalIndex: String(proposalIndex),
-                awardAccount: encodeAddress(decodeHex(item.event.call?.args.beneficiary.value)),
+                awardAccount: encodeAddress(decodeHex(item.event.extrinsic?.call.args.beneficiary.value)),
                 title: "tbd",
-                address: getOriginAccountId(item.event.call?.origin),
-                awardAmount: BigInt(item.event.call?.args.value),
+                address: getOriginAccountId(item.event.extrinsic?.call.origin),
+                awardAmount: BigInt(item.event.extrinsic?.call.args.value),
                 eventHash: item.event.extrinsic?.hash,
                 eventDate: new Date(block.header.timestamp),
                 eventblockHeight: block.header.height
@@ -1613,10 +1586,10 @@ const decodeEvent = (
         return {name, 
                 args: {id: item.event.id,
                       proposalIndex: String(propData),
-                      awardAccount: encodeAddress(decodeHex(item.event.call?.args.beneficiary.value)),
+                      awardAccount: encodeAddress(decodeHex(item.event.extrinsic?.call.args.beneficiary.value)),
                       title: "tbd",
-                      address: getOriginAccountId(item.event.call?.origin),
-                      awardAmount: BigInt(item.event.call?.args.value),
+                      address: getOriginAccountId(item.event.extrinsic?.call.origin),
+                      awardAmount: BigInt(item.event.extrinsic?.call.args.value),
                       eventHash: item.event.extrinsic?.hash,
                       eventDate: new Date(block.header.timestamp),
                       eventblockHeight: block.header.height
@@ -1636,7 +1609,7 @@ const decodeEvent = (
         return {name, 
           args: {id: item.event.id,
                 proposalIndex: String(proposalIndex),
-                address: getOriginAccountId(item.event.call?.origin),
+                address: getOriginAccountId(item.event.extrinsic?.call.origin),
                 slashedAmount: BigInt(slashed),
                 eventHash: item.event.extrinsic?.hash,
                 eventDate: new Date(block.header.timestamp),
@@ -1650,7 +1623,7 @@ const decodeEvent = (
                 args: {id: item.event.id,
                       proposalIndex: String(propData[0]),
                       title: "tbd",
-                      address: getOriginAccountId(item.event.call?.origin),
+                      address: getOriginAccountId(item.event.extrinsic?.call.origin),
                       slashedAmount: BigInt(propData[1]),
                       eventHash: item.event.extrinsic?.hash,
                       eventDate: new Date(block.header.timestamp),
@@ -1673,7 +1646,7 @@ const decodeEvent = (
           args: {id: item.event.id,
                 proposalIndex: String(proposalIndex),
                 awardAccount: encodeAddress( beneficiary),
-                address: getOriginAccountId(item.event.call?.origin),
+                address: getOriginAccountId(item.event.extrinsic?.call.origin),
                 awardAmount: BigInt(amount),
                 eventHash: item.event.extrinsic?.hash,
                 eventDate: new Date(block.header.timestamp),
@@ -1689,8 +1662,8 @@ const decodeEvent = (
 
     case 'Preimage.Noted': {
       const e = new PreimageNotedEvent(ctx, item.event)
-      console.log("\n\n Bounties events ::::", item.event)
-      console.log("\n\n Bounties Call ::::", item.event.call)
+      // console.log("\n\n Bounties events ::::", item.event)
+      // console.log("\n\n Bounties Call ::::", item.event.call)
       if (e.isV1110){
         let {hash} = e.asV1110
 

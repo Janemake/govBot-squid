@@ -3,6 +3,7 @@ type Account @entity {
   account: String @unique
   identityDisplay: String 
   councilMember: String
+  technicalCommitteeMember: String
   prop: [Proposals]  @derivedFrom (field: "propCreator")
   refs: [Referenda] @derivedFrom (field: "propCreator")
   treasuryProps: [TreasuryProposals] @derivedFrom (field: "propCreator")
@@ -157,7 +158,6 @@ type TechComProposalsVotes @entity {
   nbNay: Int
   eventHash: String
   lastUpdateDate: DateTime
-  startblockHeight: Int
   lastUpdateblockHeight: Int
 }
 

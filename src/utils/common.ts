@@ -10,7 +10,8 @@ export const getAccount = (m: Map<string, Account>, id: string): Account => {
  let acc = m.get(id)
  if (acc == null) {
    acc = new Account({
-     id
+     id: id,
+     account: id,
    })
    m.set(id, acc)
  if (String(id) === "41UnKaWcErMsBJTLfqrrZBQdqeWARKz4FQLSkVKxHjgZHhSM") {
@@ -36,8 +37,7 @@ export const getReferenda = (m: Map<string, Referenda>, id: string ): Referenda 
   let props = m.get(id)
   if (props == null) {
     props = new Proposals({
-      id: id,
-      proposalHash: id
+      id: id
     })
     m.set(id, props)
   }
@@ -49,8 +49,7 @@ export const getReferenda = (m: Map<string, Referenda>, id: string ): Referenda 
   let props = m.get(id)
   if (props == null) {
     props = new CouncilMotions({
-      id: id,
-      proposalHash: id
+      id: id
     })
     m.set(id, props)
   }
@@ -61,8 +60,7 @@ export const getReferenda = (m: Map<string, Referenda>, id: string ): Referenda 
   let props = m.get(id)
   if (props == null) {
     props = new TreasuryProposals({
-      id: id,
-      proposalHash: id
+      id: id
     })
     m.set(id, props)
   }
@@ -73,8 +71,7 @@ export const getReferenda = (m: Map<string, Referenda>, id: string ): Referenda 
   let props = m.get(id)
   if (props == null) {
     props = new BountiesProposals({
-      id: id, 
-      bountyHash: id
+      id: id
     })
     m.set(id, props)
   }
@@ -85,8 +82,7 @@ export const getReferenda = (m: Map<string, Referenda>, id: string ): Referenda 
   let props = m.get(id)
   if (props == null) {
     props = new TechComProposals({
-      id: id,
-      proposalHash: id
+      id: id
     })
     m.set(id, props)
   }
@@ -117,3 +113,13 @@ export function getOriginAccountId(origin: any): string {
 }
 
 
+export function getAccountId(valAccount: any): string {
+  console.log("Func ===> getOriginAccount", valAccount)
+
+  if (valAccount.__kind === 'Id') {
+      return encodeAddress(decodeHex(valAccount.value))
+  } else {
+      return encodeAddress(decodeHex(valAccount))
+  }
+
+}
