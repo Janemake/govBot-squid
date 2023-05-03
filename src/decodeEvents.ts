@@ -47,7 +47,10 @@ import {
   TreasuryAwardedEvent,
   TreasuryProposedEvent,
   TreasuryRejectedEvent,
-  TreasurySpendApprovedEvent
+  TreasurySpendApprovedEvent,
+
+  PhalaStakePoolv2RewardReceivedEvent, PhalaStakePoolv2OwnerRewardsWithdrawnEvent
+
 } from './types/events'
 import {encodeAddress, encodeHash} from './utils/converter'
 
@@ -236,6 +239,8 @@ const decodeEvent = (
           return null
       }
     }
+
+
 
     // IDENTITY EVENTS
     case 'Identity.IdentitySet': {

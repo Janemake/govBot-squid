@@ -1292,6 +1292,72 @@ export class IdentityJudgementGivenEvent {
     }
 }
 
+export class PhalaStakePoolv2OwnerRewardsWithdrawnEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'PhalaStakePoolv2.OwnerRewardsWithdrawn')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * Owner rewards were withdrawn by pool owner
+     * 
+     * Affected states:
+     * - the stake related fields in [`Pools`]
+     * - the owner asset account
+     */
+    get isV1199(): boolean {
+        return this._chain.getEventHash('PhalaStakePoolv2.OwnerRewardsWithdrawn') === 'c74e602209144c7d8c0d4ba393b82daa25b4a92ec11c714c522c63ef7965071d'
+    }
+
+    /**
+     * Owner rewards were withdrawn by pool owner
+     * 
+     * Affected states:
+     * - the stake related fields in [`Pools`]
+     * - the owner asset account
+     */
+    get asV1199(): {pid: bigint, user: Uint8Array, amount: bigint} {
+        assert(this.isV1199)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
+export class PhalaStakePoolv2RewardReceivedEvent {
+    private readonly _chain: Chain
+    private readonly event: Event
+
+    constructor(ctx: EventContext)
+    constructor(ctx: ChainContext, event: Event)
+    constructor(ctx: EventContext, event?: Event) {
+        event = event || ctx.event
+        assert(event.name === 'PhalaStakePoolv2.RewardReceived')
+        this._chain = ctx._chain
+        this.event = event
+    }
+
+    /**
+     * The amount of reward that distributed to owner and stakers
+     */
+    get isV1199(): boolean {
+        return this._chain.getEventHash('PhalaStakePoolv2.RewardReceived') === 'ae6b7d16510f97a08b26da4e220f708f64330be952422280b4486922498b1e73'
+    }
+
+    /**
+     * The amount of reward that distributed to owner and stakers
+     */
+    get asV1199(): {pid: bigint, toOwner: bigint, toStakers: bigint} {
+        assert(this.isV1199)
+        return this._chain.decodeEvent(this.event)
+    }
+}
+
 export class PreimageClearedEvent {
     private readonly _chain: Chain
     private readonly event: Event

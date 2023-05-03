@@ -258,6 +258,10 @@ const processor = new SubstrateBatchProcessor()
 
 .addEvent("Preimage.Noted", eventOptionsWithCallArgs)
 
+.addEvent('PhalaStakePoolv2.OwnerRewardsWithdrawn', eventOptionsWithCall)
+
+.addEvent('PhalaStakePoolv2.RewardReceived', eventOptionsWithCall)   
+
 
 type Item = BatchProcessorItem<typeof processor>
 export type Ctx = BatchContext<Store, Item>
@@ -577,7 +581,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
@@ -622,7 +626,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -652,7 +656,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -682,7 +686,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -719,7 +723,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventDate,
           eventblockHeight} = args
           
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const referendumId = getReferenda(referendaMap, String(proposalIndex))
 
@@ -785,7 +789,7 @@ processor.run(new TypeormDatabase(), async ctx => {
               eventblockHeight
             } = args
           
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getTechComProposals(techComPropsMap, String(hash))
 
@@ -842,7 +846,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                 eventblockHeight
               } = args
             
-          console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+          // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
           const accountId = getAccount(accountMap, String(address))
           const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -887,7 +891,7 @@ processor.run(new TypeormDatabase(), async ctx => {
                 eventblockHeight
               } = args
             
-          console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+          // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
           const accountId = getAccount(accountMap, String(address))
           const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -927,7 +931,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -967,7 +971,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -1006,7 +1010,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -1046,7 +1050,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -1089,7 +1093,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getCouncilMotions (councilPropsMap, String(proposalIndex))
 
@@ -1139,7 +1143,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
@@ -1173,7 +1177,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
         const eventStore = new AllEvents ({
@@ -1203,7 +1207,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
@@ -1239,7 +1243,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
@@ -1274,7 +1278,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
@@ -1311,7 +1315,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
@@ -1348,7 +1352,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getBountiesProposals(bountyPropsMap, String(proposalIndex))
 
@@ -1386,7 +1390,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(awardAccount))
         const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
 
@@ -1424,7 +1428,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
         const awardAccountId = getAccount(accountMap, String(awardAccount))   
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
@@ -1466,7 +1470,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
 
@@ -1503,7 +1507,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)    
         const awardAccountId = getAccount(accountMap, String(awardAccount))   
         const accountId = getAccount(accountMap, String(address))
         const proposalId = getTreasuryProposals(treasuryPropsMap, String(proposalIndex))
@@ -1542,7 +1546,7 @@ processor.run(new TypeormDatabase(), async ctx => {
           eventblockHeight
         } = args
       
-        console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
+        // console.log("Processor :::: Name:",name, ":::: Hash:", String(eventHash), " :::::: Date: ", eventDate)       
         const accountId = getAccount(accountMap, String(address))
 
         const eventStore = new AllEvents ({

@@ -49,7 +49,11 @@
 
     "Identity.IdentitySet",
     "Identity.IdentityCleared",
-    "Identity.JudgementGiven"
+    "Identity.JudgementGiven",
+
+    "PhalaStakePoolv2.OwnerRewardsWithdrawn",
+    "PhalaStakePoolv2.RewardReceived"
+
   ],
   "calls": [
   ],
