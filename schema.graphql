@@ -15,6 +15,7 @@ type Account @entity {
   eventDetails: [AllEvents] @derivedFrom (field: "eventOwner")
 }
 
+
 type CouncilMotions @entity {
   id: ID! 
   titleMotions: String
@@ -147,6 +148,7 @@ type TechComProposals @entity {
   startblockHeight: Int
   lastUpdateblockHeight: Int
   statusProposals: String
+  status_updated: String
 }
 
 type TechComProposalsVotes @entity {
