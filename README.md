@@ -20,7 +20,7 @@ It accumulates [kusama](https://kusama.network) account transfers and serves the
 
 ## Prerequisites
 
-* node 16.x
+* node 16.x 
 * docker
 * npm -- note that `yarn` package manager is not supported
 
@@ -41,7 +41,7 @@ make build
 # 3. Start target Postgres database and detach
 make up
 
-# 4. Start the processor
+# 4. Start the processor with
 make process
 
 # 5. The command above will block the terminal
